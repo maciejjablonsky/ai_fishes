@@ -47,15 +47,15 @@ class Fish:
 
     def dodge_borders(self, next_position):
         width, height = self.dimensions
-        if next_position.x < 0:
+        if next_position.x < self.borders.left_upper.x:
             self.velocity = self.velocity.reflect_x()
-            next_position = next_position.reflect_x()
+            next_position = next_position.reflect_x((next_position.x + self.coords.x) / 2)
         elif next_position.x + width > self.borders.right_bottom.x:
             self.velocity = self.velocity.reflect_x()
             next_position = next_position.reflect_x((next_position.x + self.coords.x) / 2)
-        if next_position.y < 0:
+        if next_position.y < self.borders.left_upper.y:
             self.velocity = self.velocity.reflect_y()
-            next_position = next_position.reflect_y()
+            next_position = next_position.reflect_y((next_position.y + self.coords.y) / 2)
         elif next_position.y + height > self.borders.right_bottom.y:
             self.velocity = self.velocity.reflect_y()
             next_position = next_position.reflect_y((next_position.y + self.coords.y) / 2)

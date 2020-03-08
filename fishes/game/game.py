@@ -1,6 +1,5 @@
 import json
 
-from .interaction_controller import EventsController
 from .timer import Time
 from .view import view_from_json
 from ..data.fish import fish_from_json
@@ -8,12 +7,16 @@ from ..data.physics.area import Rectangle
 from ..data.physics.point import Point
 import pygame as pg
 
+def open_config(path="fishes/game/config.json"):
+    try:
+        with open(path, "r") as config_file:
+            return json.load(config_file)
+    except OSError:
+        raise OSError("Cannot open {0}".format(path))
 
 def game_from_json(path="fishes/game/config.json"):
     try:
-        with open(path, "r") as config_file:
-            config_json = json.load(config_file)
-            return Game(config=config_json)
+        return Game(config=open_config())
     except OSError:
         raise OSError("Cannot open {0}".format(path))
 
@@ -24,10 +27,12 @@ class Game:
             raise TypeError("JSON configuration file is needed to create game.")
         number_of_fishes = config['fishes']['number_of_fishes']
         self._borders = Rectangle(
-            left_upper=Point(x=0, y=0),
+            left_upper=Point(
+                x=config['fishes']['regular_fish']['coords']['min_x'],
+                y=config['fishes']['regular_fish']['coords']['min_y']),
             right_bottom=Point(
-                x=config['view']['window']['width'],
-                y=config['view']['window']['height']
+                x=config['fishes']['regular_fish']['coords']['max_x'],
+                y=config['fishes']['regular_fish']['coords']['max_y']
             )
         )
         self._fishes = [fish_from_json(config, self._borders) for i in
@@ -35,7 +40,23 @@ class Game:
         self._view = view_from_json(config['view'])
         self._time = Time()
         self._running = False
-        # self._controller = EventsController()
+
+    def reset(self):
+        config = open_config()
+        self._borders = Rectangle(
+            left_upper=Point(
+                x=config['fishes']['regular_fish']['coords']['min_x'],
+                y=config['fishes']['regular_fish']['coords']['min_y']),
+            right_bottom=Point(
+                x=config['fishes']['regular_fish']['coords']['max_x'],
+                y=config['fishes']['regular_fish']['coords']['max_y']
+            )
+        )
+        self._fishes = [fish_from_json(config, self._borders) for i in
+                        range(config['fishes']['number_of_fishes'])]
+        self._view = view_from_json(config['view'])
+        self._time.stop()
+        self.run()
 
     @property
     def running(self):
@@ -81,4 +102,6 @@ class Game:
                     self.stop()
                 elif event.key == pg.K_SPACE:
                     self._time.toggle_pause()
+                elif event.key == pg.K_r:
+                    self.reset()
 
