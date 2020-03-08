@@ -6,6 +6,7 @@ from .view import view_from_json
 from ..data.fish import fish_from_json
 from ..data.physics.area import Rectangle
 from ..data.physics.point import Point
+import pygame as pg
 
 
 def game_from_json(path="fishes/game/config.json"):
@@ -34,7 +35,7 @@ class Game:
         self._view = view_from_json(config['view'])
         self._time = Time()
         self._running = False
-        self._controller = EventsController()
+        # self._controller = EventsController()
 
     @property
     def running(self):
@@ -50,9 +51,6 @@ class Game:
 
     def stop(self):
         self._time.stop()
-
-    def handle_events(self):
-        pass
 
     def move_objects(self):
         dtime = self._time.dtime
@@ -70,3 +68,17 @@ class Game:
                             )
         self._view.blit_fps(self._time.fps())
         self._view.view()
+
+    def stop(self):
+        self._time.stop()
+
+    def handle_events(self):
+        for event in pg.event.get():
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+                self.stop()
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    self.stop()
+                elif event.key == pg.K_SPACE:
+                    self._time.toggle_pause()
+
