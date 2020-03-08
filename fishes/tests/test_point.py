@@ -57,8 +57,22 @@ class TestPoint(TestCase):
         self.assertEqual(self.point.reflect((-3, -3)), (-8, -8))
 
     def test_eq(self):
-        self.assertEqual(self.point, (2,2))
-        another_point = Point(2,2)
+        self.assertEqual(self.point, (2, 2))
+        another_point = Point(2, 2)
         self.assertEqual(self.point, another_point)
-        self.assertEqual(self.point, (2,2))
-        self.assertNotEqual(self.point, (0,2))
+        self.assertEqual(self.point, (2, 2))
+        self.assertNotEqual(self.point, (0, 2))
+
+    def test_round(self):
+        self.point = Point(2.5, 2.5)
+        self.assertEqual(round(self.point), (2, 2))
+        self.point = Point(2.6, 2.4)
+        self.assertEqual(round(self.point), (3, 2))
+        self.point = Point(2.4, 2.6)
+        self.assertEqual(round(self.point), (2, 3))
+
+    def test_phi(self):
+        self.assertEqual((2, 2), self.point)
+        self.assertEqual(radians(45), self.point.phi)
+        self.point = Point(1, sqrt(3))
+        self.assertAlmostEqual(radians(60), self.point.phi)

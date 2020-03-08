@@ -24,12 +24,13 @@ class Game:
         self._borders = Rectangle(
             left_upper=Point(x=0, y=0),
             right_bottom=Point(
-                x=config['view']['dimensions']['width'],
-                y=config['view']['dimensions']['height']
+                x=config['view']['window']['width'],
+                y=config['view']['window']['height']
             )
         )
-        self._fishes = [fish_from_json(config['fishes']['regular_fish'], self._borders) for i in range(number_of_fishes)]
-        self._view = view_from_json(config)
+        self._fishes = [fish_from_json(config, self._borders) for i in
+                        range(number_of_fishes)]
+        self._view = view_from_json(config['view'])
         self._time = Time()
         self._running = False
         self._controller = EventsController()
@@ -38,7 +39,6 @@ class Game:
     def running(self):
         return self._time.running
 
-
     def run(self):
         self._time.start()
         while self.running:
@@ -46,8 +46,6 @@ class Game:
             self._time.update()
             self.move_objects()
             self.view()
-            # TODO delete this stop after implementing view()
-            self.stop()
 
     def stop(self):
         self._time.stop()
@@ -61,4 +59,13 @@ class Game:
             fish.move(dtime)
 
     def view(self):
-        pass
+        # textures = {key: value['texture'] for key, value in self._view.textures.items()}
+        textures = self._view.textures
+        self._view.blit(textures['background']['texture'], (0, 0))
+        for fish in self._fishes:
+            self._view.blit(textures['regular_fish']['texture'],
+                            (fish.coords.x, fish.coords.y),
+                            fish.velocity.phi
+                            )
+        self._view.blit_fps(self._time.fps())
+        self._view.view()

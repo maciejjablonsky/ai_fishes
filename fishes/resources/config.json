@@ -1,7 +1,6 @@
 {
-  "name": "Aquarium",
   "fishes": {
-    "number_of_fishes": 50,
+    "number_of_fishes": 200,
     "regular_fish": {
       "coords": {
         "random": true,
@@ -9,26 +8,36 @@
         "min_x": 0,
         "min_y": 0,
         "max_x": 1080,
-        "max_y": 720
-
+        "max_y": 720,
+        "x": 540,
+        "y": 360
       },
       "motion": {
         "translational": {
-          "module_value": 200
+          "module_value": 400
         }
-      },
-      "texture": {
-        "width": 60,
-        "height": 36.5,
-        "path": "resources/graphics/regular_fish.png"
       }
     }
   },
   "view": {
-    "dimensions": {
+    "name": "Aquarium",
+    "window": {
       "width": 1080,
       "height": 720
+    },
+    "textures": {
+      "background": {
+        "width": 1080,
+        "height": 720,
+        "path": "fishes/resources/graphics/background.png",
+        "texture": null
+      },
+      "regular_fish": {
+        "width": 60,
+        "height": 36.5,
+        "path": "fishes/resources/graphics/pink_fish.png",
+        "texture": null
+      }
     }
   }
-
 }

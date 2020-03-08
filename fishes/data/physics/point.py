@@ -87,6 +87,9 @@ class Point:
         elif type(other) in [tuple, list]:
             return Point(other[0] - self.x, other[1] - self.y)
 
+    def __round__(self):
+        return Point(int(round(self.x)), int(round(self.y)))
+
     def reflect_x(self, x=0):
         diff = x - self.x
         return Point(self.x + diff * 2, self.y)
@@ -104,3 +107,6 @@ class Point:
 
     def __str__(self):
         return "{0}({1}, {2})".format(self.__class__.__name__, self.x, self.y)
+
+    def __repr__(self):
+        return self.__str__()
