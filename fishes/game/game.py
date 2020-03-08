@@ -1,13 +1,14 @@
 import json
-from ..data.fish import fish_from_json
-from .view import view_from_json
-from .timer import Time
+
 from .interaction_controller import EventsController
+from .timer import Time
+from .view import view_from_json
+from ..data.fish import fish_from_json
 from ..data.physics.area import Rectangle
 from ..data.physics.point import Point
 
 
-def game_from_json(path="fishes/resources/config.json"):
+def game_from_json(path="fishes/game/config.json"):
     try:
         with open(path, "r") as config_file:
             config_json = json.load(config_file)

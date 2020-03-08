@@ -1,4 +1,4 @@
-from math import degrees, radians, sqrt, sin, cos
+from math import radians, sqrt, sin, cos
 from unittest import TestCase
 
 from fishes.data.physics.point import Point

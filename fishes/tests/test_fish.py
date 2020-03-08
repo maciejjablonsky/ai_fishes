@@ -9,7 +9,7 @@ from fishes.data.physics.velocity import Velocity
 
 class TestFish(TestCase):
     def setUp(self):
-        with open("fishes/resources/config.json", 'r') as config_file:
+        with open("fishes/game/config.json", 'r') as config_file:
             json_file = json.load(config_file)
             self.borders = Rectangle(Point(0, 0), Point(50, 50))
             self.fish = Fish(json_file, self.borders)
@@ -21,7 +21,7 @@ class TestFish(TestCase):
         next_position = Point(27, -2)
         next_position = self.fish.dodge_borders(next_position)
         self.assertEqual((27, 2), next_position)
-        self.assertEqual((2,4), self.fish.velocity)
+        self.assertEqual((2, 4), self.fish.velocity)
 
     def test_dodge_borders__right(self):
         self.fish.coords = Point(41, 25)
@@ -45,4 +45,4 @@ class TestFish(TestCase):
         next_position = Point(-3, 28)
         next_position = self.fish.dodge_borders(next_position)
         self.assertEqual((3, 28), next_position)
-        self.assertEqual((5,3), self.fish.velocity)
+        self.assertEqual((5, 3), self.fish.velocity)

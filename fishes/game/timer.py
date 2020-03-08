@@ -1,13 +1,13 @@
-from pygame.time import Clock
 from pygame import time
+from pygame.time import Clock
 
 
 class Time():
     def __init__(self):
         self.clock = Clock()
-        self._previous_time : float= 0
-        self._next_time : float = 0
-        self._last_delta_time : float = 0
+        self._previous_time: float = 0
+        self._next_time: float = 0
+        self._last_delta_time: float = 0
         self._global = 0
         self._running = False
 
@@ -31,7 +31,6 @@ class Time():
         return self._running
 
     def update(self):
-
         self._next_time = time.get_ticks()
         self._last_delta_time = (self._next_time - self._previous_time) / 1000
         self._previous_time = self._next_time

@@ -1,7 +1,6 @@
 from math import sin, cos, sqrt, atan2
 
 
-
 class Point:
     def __init__(self, x=0, y=0):
         self._x = x

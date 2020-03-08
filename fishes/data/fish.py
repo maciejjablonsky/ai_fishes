@@ -1,8 +1,9 @@
+from math import radians
+from random import randint
+
+from .physics.area import Rectangle
 from .physics.point import Point
 from .physics.velocity import Velocity
-from random import randint
-from math import radians
-from .physics.area import Rectangle
 
 
 def fish_from_json(fish_config, borders):
@@ -31,9 +32,8 @@ class Fish:
         self.velocity = Velocity()
         self.velocity.set_polar(
             fish_config['motion']['translational']['module_value'],
-            radians(randint(0,359)))
+            radians(randint(0, 359)))
         self.borders: Rectangle = borders
-
 
     def reposition(self, dtime=0):
         return self.velocity.reposition(dtime)
@@ -52,11 +52,11 @@ class Fish:
             next_position = next_position.reflect_x()
         elif next_position.x + width > self.borders.right_bottom.x:
             self.velocity = self.velocity.reflect_x()
-            next_position = next_position.reflect_x((next_position.x + self.coords.x)/2)
+            next_position = next_position.reflect_x((next_position.x + self.coords.x) / 2)
         if next_position.y < 0:
             self.velocity = self.velocity.reflect_y()
             next_position = next_position.reflect_y()
         elif next_position.y + height > self.borders.right_bottom.y:
             self.velocity = self.velocity.reflect_y()
-            next_position = next_position.reflect_y((next_position.y + self.coords.y)/2)
+            next_position = next_position.reflect_y((next_position.y + self.coords.y) / 2)
         return next_position

@@ -1,6 +1,7 @@
-from unittest import TestCase
-from fishes.game.timer import Time
 import time
+from unittest import TestCase
+
+from fishes.game.timer import Time
 
 
 def is_between(low, value, high):
@@ -12,7 +13,7 @@ class TestTime(TestCase):
         self.time = Time()
 
     def test_dtime(self):
-        sleep_time = 1 #
+        sleep_time = 1  #
         self.time.start()
         time.sleep(sleep_time)
         self.time.update()
@@ -21,4 +22,3 @@ class TestTime(TestCase):
         epsilon = 0.003
         self.assertGreaterEqual(dtime, sleep_time - epsilon)
         self.assertLessEqual(dtime, sleep_time + epsilon)
-
