@@ -3,18 +3,18 @@
     "number_of_fishes": 100,
     "regular_fish": {
       "coords": {
-        "random": false,
+        "random": true,
         "borders": false,
-        "min_x": 40,
-        "min_y": 40,
-        "max_x": 680,
-        "max_y": 680,
+        "min_x": 0,
+        "min_y": 0,
+        "max_x": 720,
+        "max_y": 720,
         "x": 40,
         "y": 40
       },
       "motion": {
         "translational": {
-          "module_value": 500
+          "module_value": 100
         }
       }
     }
