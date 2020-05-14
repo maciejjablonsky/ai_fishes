@@ -26,7 +26,7 @@ class Game:
         self.running = True
 
     def update(self):
-        agents = self.env.get_agents()
+        agents = self.env.get_state()
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': [pg.Vector2(0, 0)] * len(agents['fishes']),
@@ -36,7 +36,8 @@ class Game:
 
     def draw(self):
         self.screen.fill(SCREEN_COLOR)
-        for agent in self.env.get_agents()['fishes']:
+        state = self.env.get_state()
+        for agent in state['fishes'] + state['predators']:
             self.screen.blit(agent.get_showable(), agent.position)
         if SHOW_FPS:
             self.blit_fps(self.time.get_fps())
