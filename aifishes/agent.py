@@ -1,51 +1,59 @@
 import numpy as np
 import aifishes.config as cfg
 import typing
-import pygame
+import pygame as pg
+import scipy as scp
 
 
-def random_position(borders: list):
-    return np.array([
+def random_position():
+    borders = cfg.borders()
+    return pg.Vector2(
         scale(np.random.rand(), [0, 1], [0, borders[0]]),
         scale(np.random.rand(), [0, 1], [0, borders[1]])
-    ])
+    )
+
 
 def random_velocity():
-    magnitude = cfg.velocity_start_magnitude()
-    angle = scale(np.random.rand(), [0, 1], [0, 2*np.pi])
-    return magnitude * np.array([np.cos(angle), np.sin(angle)])
+    magnitude = cfg.fish_vel_start_magnitude()
+    angle = scale(np.random.rand(), [0, 1], [0, 360])
+    vec = pg.Vector2()
+    vec.from_polar((magnitude, angle))
+    return vec
 
-def scale(value, old, new: np.Array):
+
+def scale(value, old, new):
     return (value / (old[1] - old[0])) * (new[1] - new[0]) + new[0]
 
+X_AXIS_VEC = pg.Vector2(1, 0)
+Y_AXIS_VEC = pg.Vector2(0, 1)
+
 class Agent:
-    def __init__(self, shape :np.Array, position:np.Array, velocity: np.Array):
-        self.shape = shape
+    def __init__(self, sprite: pg.Surface, position: pg.Vector2, velocity: pg.Vector2):
+        self.sprite = sprite
         self.position = position
         self.velocity = velocity
-        self.acceleration = np.zeros(dtype=np.float32, shape=(2))
+        self.acceleration = pg.Vector2(0, 0)
         self.alive = True
 
     def update_position(self, dtime):
-        self.position = self.position + self.velocity * dtime
+        self.position += self.velocity * dtime
+
+    def limit_velocity(self):
+        limit = cfg.fish_vel_max_magnitude()
+        if self.velocity.length() > limit:
+            self.velocity = limit * self.velocity.normalize()
 
     def update_velocity(self, dtime):
-        next_velocity =  self.velocity + self.acceleration * dtime
-        limit = cfg.velocity_max_magnitude()
-        current_magnitude = np.linalg.norm(next_velocity)
-        if current_magnitude > limit:
-            unit = next_velocity / current_magnitude
-            next_velocity = limit * unit
-        self.velocity = next_velocity
+        self.velocity += self.acceleration * dtime
 
-
-    def apply_force(self, acceleration: np.Array):
+    def apply_force(self, acceleration: pg.Vector2):
         self.acceleration = acceleration
 
     def update(self, dtime):
         self.update_velocity(dtime)
+        self.limit_velocity()
         self.update_position(dtime)
 
-    def show(self):
-        shape_to_display = np.array([x + self.position for x in self.shape])
-        pygame.draw.polygon()
+    def get_showable(self):
+        angle = self.velocity.angle_to(X_AXIS_VEC)
+        return pg.transform.rotate(self.sprite, angle)

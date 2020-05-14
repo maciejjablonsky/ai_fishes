@@ -2,7 +2,7 @@ import json
 
 config = None
 
-def get_config(path='configuration.json'):
+def get_config(path='aifishes/configuration.json'):
     global config
     if config is None:
         with open(path) as config_file:
@@ -12,11 +12,11 @@ def get_config(path='configuration.json'):
 def borders():
     return get_config()['environment']['dim']
 
-def velocity_start_magnitude():
-    return get_config()['fish']['velocity_start_magnitude']
+def fish_vel_start_magnitude():
+    return get_config()['fish']['velocity']['start']
 
-def velocity_max_magnitude():
-    return get_config()['fish']['velociy_max_magnitude']
+def fish_vel_max_magnitude():
+    return get_config()['fish']['velocity']['max']
 
 def fish_dim():
     return get_config()['fish']['dim']

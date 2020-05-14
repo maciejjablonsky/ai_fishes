@@ -1,9 +1,11 @@
 {
   "fish": {
-    "amount": 100,
-    "dim": [60, 30],
-    "start_velocity_magnitude": 100,
-    "max_velocity_magnitude": 300
+    "amount": 500,
+    "dim": [30, 20],
+    "velocity":{
+      "start": 60 ,
+      "max": 150
+    }
   },
   "predator": {
     "dim": [100, 40],
