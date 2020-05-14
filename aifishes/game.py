@@ -38,7 +38,11 @@ class Game:
         self.screen.fill(SCREEN_COLOR)
         state = self.env.get_state()
         for agent in state['fishes'] + state['predators']:
-            self.screen.blit(agent.get_showable(), agent.position)
+            sprite = agent.get_showable()
+            self.screen.blit(sprite, agent.position - pg.Vector2(sprite.get_size()) / 2)
+            agent.debug_print(self.screen)
+            
+
         if SHOW_FPS:
             self.blit_fps(self.time.get_fps())
         pg.display.flip()
