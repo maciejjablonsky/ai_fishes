@@ -1,15 +1,23 @@
 {
   "fish": {
-    "amount": 500,
+    "amount": 100,
     "dim": [30, 20],
     "velocity":{
       "start": 60 ,
       "max": 150
-    }
+    },
+    "reaction_radius": 50,
+    "vision_angle":300
   },
   "predator": {
-    "dim": [100, 40],
-    "amount": 1
+    "dim": [70, 40],
+    "amount": 2,
+    "velocity":{
+      "start": 100, 
+      "max": 200
+    },
+    "reaction_radius":150,
+    "vision_angle": 330
   },
   "environment": {
     "name": "AIFishes",
