@@ -29,3 +29,15 @@ def predator_dim():
 
 def predator_amount():
     return get_config()['predator']['amount']
+
+def predator_vel_start_magnitude():
+    return get_config()['predator']['velocity']['start']
+
+def predator_vel_max_magnitude():
+    return get_config()['predator']['velocity']['max']
+
+def fish():
+    return get_config()['fish']
+
+def predator():
+    return get_config()['predator']
