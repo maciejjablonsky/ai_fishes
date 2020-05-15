@@ -7,6 +7,7 @@ import pygame as pg
 PREDATOR_COLOR = pg.Color('orangered1')
 PREDATOR_SPRITE = None
 
+DEBUG_HUNT = False
 
 def predator_sprite():
     global PREDATOR_SPRITE
@@ -47,8 +48,27 @@ class Predator(Agent):
         pg.draw.polygon(screen, (0, 0, 0), self.reaction_area(), 2)
 
 
+   
 
-    def hunt(self, surroundings):
+    def debug_hunt(self, surroundings):
         screen = pg.display.get_surface()
         for each in surroundings:
             pg.draw.circle(screen, (255, 0, 0), np.array(each.position, dtype=np.int32), 15)
+
+    def choose_closest(self, surroundings):
+        min_distance = float('inf')
+        closest = None
+        if len(surroundings) > 0:
+            for each in surroundings:
+                distance = self.position.distance_to(each.position)
+                if distance < min_distance and each is not isinstance(each, Predator):
+                    min_distance = distance
+                    closest = each
+        return closest
+
+    def hunt(self, surroundings):
+        if DEBUG_HUNT: self.debug_hunt(surroundings)
+        closest = self.choose_closest(surroundings)
+        if closest is not None:
+            self.velocity  = self.velocity.lerp(closest.position - self.position, 0.05)
+
