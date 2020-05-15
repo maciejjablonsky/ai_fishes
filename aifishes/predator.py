@@ -25,8 +25,7 @@ def predator_sprite():
 def predator_shape():
     w, h = cfg.predator()['dim']
     vec = pg.Vector2
-    shape = [vec(-w/2, -h/2), vec(w/2, 0), vec(-w/2, h/2)]
-    return shape
+    return [vec(-w/2, -h/2), vec(w/2, 0), vec(-w/2, h/2)]
 
 class Predator(Agent):
     def __init__(self):
@@ -99,5 +98,5 @@ class Predator(Agent):
         dinner = self.find_collisions(surroundings) #crappy but funny
         for dish in dinner:
             if isinstance(dish,Fish):
-                dish.ate()
+                dish.die()
 
