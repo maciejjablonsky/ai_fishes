@@ -10,6 +10,7 @@ COLORS = pg.colordict.THECOLORS
 SCREEN_COLOR = COLORS['darkmagenta']
 SHOW_FPS = True
 DEBUG = False
+DEBUG_HUNT = False
 
 
 class Game:
@@ -43,7 +44,6 @@ class Game:
             sprite = agent.get_showable()
             self.screen.blit(sprite, agent.position - pg.Vector2(sprite.get_size()) / 2)
             if DEBUG: agent.debug_print(self.screen)
-            
         if SHOW_FPS:
             self.blit_fps(self.time.get_fps())
         pg.display.flip()
@@ -71,3 +71,6 @@ class Game:
                     self.setup()
                 if event.key == pg.K_d:
                     DEBUG = not DEBUG
+                if event.key == pg.K_h:
+                    import aifishes.predator as pred
+                    pred.DEBUG_HUNT = not pred.DEBUG_HUNT
