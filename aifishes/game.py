@@ -10,37 +10,34 @@ COLORS = pg.colordict.THECOLORS
 SCREEN_COLOR = COLORS['darkmagenta']
 SHOW_FPS = True
 DEBUG = False
-DEBUG_HUNT = False
 
 
 class Game:
     def __init__(self):
         pg.init()
-        self.env = None
-        self.screen = pg.display.set_mode(size=cfg.borders())
+        self.environment = None
+        self.screen = pg.display.set_mode(cfg.borders()) 
         self.time = Time()
         pg.font.init()
         self.font = pg.font.Font(None, 30)
         self.running = False
-        DEBUG = False
 
     def setup(self):
         cfg.load_config()
-        self.env = Environment()
+        self.environment = Environment()
         self.running = True
 
     def update(self):
-        agents = self.env.get_state()
+        agents = self.environment.get_state()
         data = {
             'dtime': self.time.get_dtime(),
-            'fish_acc': [pg.Vector2(0, 0)] * len(agents['fishes']),
+            'fish_acc': [pg.Vector2(0,0)] * len(agents['fishes']),
             'predator_acc': [pg.Vector2(0, 0)] * len(agents['predators']),
         }        
-        self.env.frame(data)
+        self.environment.frame(data)
 
     def draw(self):
-        
-        state = self.env.get_state()
+        state = self.environment.get_state()
         for agent in state['fishes'] + state['predators']:
             sprite = agent.get_showable()
             self.screen.blit(sprite, agent.position - pg.Vector2(sprite.get_size()) / 2)
