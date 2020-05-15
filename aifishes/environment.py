@@ -8,7 +8,6 @@ from aifishes.agent import Agent
 
 QTREE_THRESHOLD = 4
 
-
 class Environment:
     def __init__(self):
         self.fishes = [Fish() for _ in range(cfg.fish_amount())]
@@ -33,7 +32,6 @@ class Environment:
             self.find_neighbours(predator)
         for agent in self.fishes + self.predators:
             agent.update(dtime)
-
         self.update_qtree()
 
     def update_qtree(self):
@@ -41,11 +39,11 @@ class Environment:
         w, h = cfg.borders()
         self.qtree = Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
         [self.qtree.insert((agent.get_x(), agent.get_y(), agent))
-         for agent in self.fishes]
+         for agent in self.fishes + self.predators]
 
     def find_neighbours(self, agent: Agent):
         reaction_area = agent.reaction_area()
         self.qtree.set_mask(reaction_area)
         neighbours = self.qtree.elements()
-        result = [element[2] for element in neighbours]
-        return result
+        return [element[2] for element in neighbours]
+        

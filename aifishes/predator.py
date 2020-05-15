@@ -35,40 +35,37 @@ class Predator(Agent):
         vision_angle = cfg.predator()['vision_angle']
         start = agent.scale(direction_angle - vision_angle/ 2, [0, 360], [0, 2*np.pi])
         end = agent.scale(direction_angle + vision_angle / 2, [0, 360], [0, 2*np.pi])
-        t = np.linspace(start, end, num=20, dtype=np.float32)
+        t = np.linspace(start, end, dtype=np.float32)
         x = np.append(0, radius * np.cos(t))
         y = np.append(0, radius * np.sin(t))
         area = np.c_[x, y]
         return area + self.position
 
     def debug_print(self, screen:pg.Surface):
-        pg.draw.circle(screen, agent.DEBUG_POSITION_COLOR, np.array(self.position, dtype=np.int32), 5)
+        pg.draw.circle(screen, agent.DEBUG_POSITION_COLOR, np.array(self.position, dtype=np.int32), 10)
         sprite_dim = pg.Vector2(self.showable_sprite.get_size())
         pg.draw.rect(screen, (0, 255, 0), pg.Rect(self.position - sprite_dim/2, sprite_dim), 2)
         pg.draw.polygon(screen, (0, 0, 0), self.reaction_area(), 2)
 
-
-   
-
     def debug_hunt(self, surroundings):
         screen = pg.display.get_surface()
         for each in surroundings:
-            pg.draw.circle(screen, (255, 0, 0), np.array(each.position, dtype=np.int32), 15)
+            pg.draw.circle(screen, (255, 0, 0), np.array(each.position, dtype=np.int32), 10)
 
     def choose_closest(self, surroundings):
         min_distance = float('inf')
         closest = None
         if len(surroundings) > 0:
-            for each in surroundings:
-                distance = self.position.distance_to(each.position)
-                if distance < min_distance and each is not isinstance(each, Predator):
+            for neighbour in surroundings:
+                distance = self.position.distance_to(neighbour.position)
+                if distance < min_distance and neighbour is not isinstance(neighbour, Predator) and neighbour is not self:
                     min_distance = distance
-                    closest = each
+                    closest = neighbour
         return closest
 
     def hunt(self, surroundings):
         if DEBUG_HUNT: self.debug_hunt(surroundings)
         closest = self.choose_closest(surroundings)
         if closest is not None:
-            self.velocity  = self.velocity.lerp(closest.position - self.position, 0.05)
+            self.velocity  = self.velocity.lerp(self.velocity.magnitude() * (closest.position - self.position),  0.9)
 
