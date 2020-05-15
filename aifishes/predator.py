@@ -68,4 +68,9 @@ class Predator(Agent):
         closest = self.choose_closest(surroundings)
         if closest is not None:
             self.velocity  = self.velocity.lerp(self.velocity.magnitude() * (closest.position - self.position),  0.9)
-
+        
+        #TODO surroundings are only agents who are in reaction area but is that the case?
+        # dinner = self.find_collisions(surroundings) #crappy but funny
+        # for dish in dinner:
+        #     pass
+        #     #dish.ate()

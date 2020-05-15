@@ -3,6 +3,7 @@ import aifishes.config as cfg
 import typing
 import pygame as pg
 import scipy as scp
+from shapely.geometry import Polygon
 
 
 def random_position():
@@ -60,8 +61,8 @@ class Agent:
         return self.position[1]
 
     def get_hitbox(self):
-        """Return vector of hitbox points"""
-        raise NotImplementedError()
+        #TODO implement hitbox
+        raise NotImplementedError
 
     def update(self, dtime):
         self.update_velocity(dtime)
@@ -78,3 +79,16 @@ class Agent:
 
     def reaction_area(self):
         raise NotImplementedError()
+
+    def collide(self, obj):
+        from pygame.mask import from_surface
+        obj_hitbox = Polygon(obj.get_hitbox())
+        self_hitbox = Polygon(self.get_hitbox())
+        return self_hitbox.intersects(obj_hitbox)
+
+    def find_collisions(self,surroundings):
+        collisions = []
+        for obj in surroundings:
+            if self.collide(obj):
+                collisions.append(obj)
+        return collisions
