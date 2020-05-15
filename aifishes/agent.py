@@ -92,3 +92,7 @@ class Agent:
             if self.collide(obj):
                 collisions.append(obj)
         return collisions
+
+    def ate(self):
+            self.alive = False;
+
