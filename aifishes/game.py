@@ -9,6 +9,7 @@ COLORS = pg.colordict.THECOLORS
 
 SCREEN_COLOR = COLORS['darkmagenta']
 SHOW_FPS = True
+DEBUG = False
 
 
 class Game:
@@ -20,6 +21,7 @@ class Game:
         pg.font.init()
         self.font = pg.font.Font(None, 30)
         self.running = False
+        DEBUG = False
 
     def setup(self):
         self.env = Environment()
@@ -30,19 +32,18 @@ class Game:
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': [pg.Vector2(0, 0)] * len(agents['fishes']),
-            'predator_acc': [pg.Vector2(0, 0)] * len(agents['predators'])
-        }
+            'predator_acc': [pg.Vector2(0, 0)] * len(agents['predators']),
+        }        
         self.env.frame(data)
 
     def draw(self):
-        self.screen.fill(SCREEN_COLOR)
+        
         state = self.env.get_state()
         for agent in state['fishes'] + state['predators']:
             sprite = agent.get_showable()
             self.screen.blit(sprite, agent.position - pg.Vector2(sprite.get_size()) / 2)
-            agent.debug_print(self.screen)
+            if DEBUG: agent.debug_print(self.screen)
             
-
         if SHOW_FPS:
             self.blit_fps(self.time.get_fps())
         pg.display.flip()
@@ -55,14 +56,18 @@ class Game:
     def run(self):
         while self.running:
             self.events()
+            self.screen.fill(SCREEN_COLOR)
             self.update()
             self.draw()
             self.time.tick()
 
     def events(self):
+        global DEBUG
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 self.running = False
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_r:
                     self.setup()
+                if event.key == pg.K_d:
+                    DEBUG = not DEBUG
