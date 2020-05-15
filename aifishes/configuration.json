@@ -1,20 +1,20 @@
 {
   "fish": {
-    "amount": 0,
-    "dim": [30, 20],
+    "amount": 100,
+    "dim": [15, 10],
     "velocity":{
-      "start": 50 ,
-      "max": 1
+      "start": 50,
+      "max": 100
     },
     "reaction_radius": 50,
     "vision_angle":300
   },
   "predator": {
-    "dim": [140, 100],
+    "dim": [20, 13],
     "amount": 5,
     "velocity":{
-      "start": 5, 
-      "max": 1
+      "start": 50, 
+      "max": 50
     },
     "reaction_radius":100,
     "vision_angle": 300

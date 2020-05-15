@@ -2,7 +2,6 @@ import aifishes.config as cfg
 import pygame
 from aifishes.fish import Fish
 from aifishes.predator import Predator
-import scipy as scp
 from smartquadtree import Quadtree
 from aifishes.agent import Agent
 

@@ -2,7 +2,6 @@ import numpy as np
 import aifishes.config as cfg
 import typing
 import pygame as pg
-import scipy as scp
 
 
 def random_position():
@@ -33,6 +32,7 @@ class Agent:
     def __init__(self, sprite: pg.Surface, position: pg.Vector2, velocity: pg.Vector2):
         self.original_sprite = sprite
         self.showable_sprite = None
+        self.hitbox = None
         self.position = position
         self.velocity = velocity
         self.acceleration = pg.Vector2(0, 0)
@@ -74,3 +74,7 @@ class Agent:
 
     def reaction_area(self):
         raise NotImplementedError()
+
+    def get_hitbox(self):
+        velocity_angle = X_AXIS_VEC.angle_to(self.velocity)
+        return np.array([self.position + point.rotate(velocity_angle) for point in self.hitbox], dtype=np.float32)

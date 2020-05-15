@@ -21,10 +21,15 @@ def fish_sprite():
         FISH_SPRITE = surf
     return FISH_SPRITE
 
+def fish_shape():
+    w, h = cfg.fish()['dim']
+    vec = pg.Vector2
+    return np.array([vec(-w/2, -h/2), vec(w/2, 0), vec(-w/2, h/2)])
 
 class Fish(Agent):
     def __init__(self):
         super().__init__(fish_sprite(), random_position(), random_velocity(cfg.fish_vel_start_magnitude()))
+        self.hitbox = fish_shape()
 
     def limit_velocity(self):
         limit = cfg.fish_vel_max_magnitude()
