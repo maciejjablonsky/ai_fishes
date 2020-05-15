@@ -59,6 +59,10 @@ class Agent:
         """Name must be 'get_y' for smartquadtree integration"""
         return self.position[1]
 
+    def get_hitbox(self):
+        """Return vector of hitbox points"""
+        raise NotImplementedError()
+
     def update(self, dtime):
         self.update_velocity(dtime)
         self.limit_velocity()
