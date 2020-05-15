@@ -43,7 +43,7 @@ class Fish(Agent):
         return area + self.position
 
     def debug_print(self, screen:pg.Surface):
-        pg.draw.circle(screen, (255, 0, 0), np.array(self.position, dtype=np.int32), 3)
+        pg.draw.circle(screen, agent.DEBUG_POSITION_COLOR, np.array(self.position, dtype=np.int32), 5)
         sprite_dim = pg.Vector2(self.showable_sprite.get_size())
         pg.draw.rect(screen, (0, 255, 0), pg.Rect(self.position - sprite_dim/2, sprite_dim), 2)
         pg.draw.polygon(screen, (0, 0, 0), self.reaction_area(), 2)

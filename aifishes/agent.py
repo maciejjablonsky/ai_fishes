@@ -23,8 +23,11 @@ def random_velocity(magnitude):
 def scale(value, old, new):
     return (value / (old[1] - old[0])) * (new[1] - new[0]) + new[0]
 
+
 X_AXIS_VEC = pg.Vector2(1, 0)
 Y_AXIS_VEC = pg.Vector2(0, 1)
+DEBUG_POSITION_COLOR = pg.Color('green')
+
 
 class Agent:
     def __init__(self, sprite: pg.Surface, position: pg.Vector2, velocity: pg.Vector2):
@@ -61,7 +64,7 @@ class Agent:
         self.limit_velocity()
         self.update_position(dtime)
         self.update_showable()
-        
+
     def update_showable(self):
         angle = self.velocity.angle_to(X_AXIS_VEC)
         self.showable_sprite = pg.transform.rotate(self.original_sprite, angle)
@@ -71,5 +74,3 @@ class Agent:
 
     def reaction_area(self):
         raise NotImplementedError()
-
-    
