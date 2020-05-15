@@ -31,9 +31,9 @@ class Predator(Agent):
     def reaction_area(self):
         direction_angle = agent.X_AXIS_VEC.angle_to(self.velocity)     
         radius = cfg.predator()['reaction_radius']
-        vis_angle = cfg.predator()['vision_angle']
-        start = agent.scale(direction_angle - vis_angle/ 2, [0, 360], [0, 2*np.pi])
-        end = agent.scale(direction_angle + vis_angle / 2, [0, 360], [0, 2*np.pi])
+        vision_angle = cfg.predator()['vision_angle']
+        start = agent.scale(direction_angle - vision_angle/ 2, [0, 360], [0, 2*np.pi])
+        end = agent.scale(direction_angle + vision_angle / 2, [0, 360], [0, 2*np.pi])
         t = np.linspace(start, end, num=20, dtype=np.float32)
         x = np.append(0, radius * np.cos(t))
         y = np.append(0, radius * np.sin(t))
@@ -41,9 +41,14 @@ class Predator(Agent):
         return area + self.position
 
     def debug_print(self, screen:pg.Surface):
-        pg.draw.circle(screen, (255, 0, 0), np.array(self.position, dtype=np.int32), 3)
+        pg.draw.circle(screen, agent.DEBUG_POSITION_COLOR, np.array(self.position, dtype=np.int32), 5)
         sprite_dim = pg.Vector2(self.showable_sprite.get_size())
         pg.draw.rect(screen, (0, 255, 0), pg.Rect(self.position - sprite_dim/2, sprite_dim), 2)
         pg.draw.polygon(screen, (0, 0, 0), self.reaction_area(), 2)
 
 
+
+    def hunt(self, surroundings):
+        screen = pg.display.get_surface()
+        for each in surroundings:
+            pg.draw.circle(screen, (255, 0, 0), np.array(each.position, dtype=np.int32), 15)
