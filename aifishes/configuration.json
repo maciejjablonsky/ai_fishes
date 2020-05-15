@@ -1,7 +1,7 @@
 {
   "fish": {
     "amount": 2000,
-    "dim": [15, 10],
+    "dim": [6, 4],
     "velocity":{
       "start": 60 ,
       "max": 150
@@ -10,8 +10,8 @@
     "vision_angle":300
   },
   "predator": {
-    "dim": [40, 20],
-    "amount": 4,
+    "dim": [10, 7],
+    "amount": 2,
     "velocity":{
       "start": 100, 
       "max": 200

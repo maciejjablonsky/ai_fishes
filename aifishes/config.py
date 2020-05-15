@@ -1,13 +1,17 @@
 import json
 
-config = None
+CONFIG = None
 
-def get_config(path='aifishes/configuration.json'):
-    global config
-    if config is None:
-        with open(path) as config_file:
-            config = json.load(config_file)
-    return config
+def load_config(path='aifishes/configuration.json'):
+    global CONFIG
+    with open(path) as config_file:
+        CONFIG = json.load(config_file)
+
+def get_config():
+    global CONFIG
+    if CONFIG is None:
+           load_config()
+    return CONFIG
 
 def borders():
     return get_config()['environment']['dim']

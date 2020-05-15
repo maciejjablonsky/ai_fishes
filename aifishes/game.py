@@ -25,6 +25,7 @@ class Game:
         DEBUG = False
 
     def setup(self):
+        cfg.load_config()
         self.env = Environment()
         self.running = True
 
