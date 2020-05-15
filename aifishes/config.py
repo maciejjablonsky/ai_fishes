@@ -45,3 +45,8 @@ def fish():
 
 def predator():
     return get_config()['predator']
+
+def environment():
+    return get_config()['environment']
+
+
