@@ -21,6 +21,7 @@
   },
   "environment": {
     "name": "AIFishes",
-    "dim": [1280, 720]
+    "dim": [1280, 720],
+    "border_tolerance": 5
   }
 }

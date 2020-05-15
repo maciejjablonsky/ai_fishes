@@ -29,11 +29,14 @@ class Game:
 
     def update(self):
         agents = self.environment.get_state()
+
+        # MAREK SANDBOX
+
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': [pg.Vector2(0,0)] * len(agents['fishes']),
             'predator_acc': [pg.Vector2(0, 0)] * len(agents['predators']),
-        }        
+        }             
         self.environment.frame(data)
 
     def draw(self):
