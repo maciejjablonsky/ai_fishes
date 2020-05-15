@@ -1,11 +1,26 @@
 import aifishes.config as cfg
-import pygame
+import pygame as pg
 from aifishes.fish import Fish
 from aifishes.predator import Predator
 from smartquadtree import Quadtree
 from aifishes.agent import Agent
+import numpy as np
 
 QTREE_THRESHOLD = 4
+
+def gen_border(*kwargs):
+    w, h = cfg.environment()['dim']
+    tolerance = cfg.environment()['border_tolerance']
+    if 'top' in kwargs:
+        return np.array([[-tolerance, -tolerance], [w + tolerance, -tolerance], [w + tolerance, tolerance], [-tolerance, tolerance]])
+    elif 'right' in kwargs:
+        return np.array([[w - tolerance, -tolerance], [w + tolerance, - tolerance], [w + tolerance, h + tolerance],[w - tolerance, h + tolerance]])
+    elif 'bottom' in kwargs:
+        return np.array([[-tolerance, -tolerance + h], [w + tolerance, -tolerance + h], [w + tolerance, tolerance + h], [-tolerance, tolerance + h]])
+    elif 'left':
+        return np.array([[-tolerance, -tolerance], [tolerance, -tolerance], [tolerance, h + tolerance],[-tolerance, h + tolerance]])
+    else:
+        raise NotImplemented()
 
 class Environment:
     def __init__(self):
@@ -29,11 +44,26 @@ class Environment:
             predator.apply_force(acc)
             predator.hunt(self.find_neighbours(predator))
             self.find_neighbours(predator)
+        self.kill_all_emigrants()
         self.fishes = [fish for fish in self.fishes if fish.alive]
+        self.predators = [predator for predator in self.predators if predator.alive]
         for agent in self.fishes + self.predators:
-            agent.update(dtime)
+            agent.update(dtime)       
         self.update_qtree()
-        print(len(self.fishes))
+
+    def kill_all_emigrants(self):
+        tolerance = cfg.environment()['border_tolerance']
+        emigrants = []
+        self.qtree.set_mask(gen_border('top'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.qtree.elements()]]
+        self.qtree.set_mask(gen_border('right'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.qtree.elements()]]
+        self.qtree.set_mask(gen_border('bottom'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.qtree.elements()]]
+        self.qtree.set_mask(gen_border('left'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.qtree.elements()]]
+        [emigrant.die() for emigrant in emigrants]
+        
 
     def update_qtree(self):
         """ qtree takes center x, y and then width and heigth, so region is described as (x - w, y - h, x + w, y + h)"""
@@ -47,4 +77,10 @@ class Environment:
         self.qtree.set_mask(reaction_area)
         neighbours = self.qtree.elements()
         return [element[2] for element in neighbours]
-        
+
+    def debug_print(self):
+        screen = pg.display.get_surface()
+        pg.gfxdraw.filled_polygon(screen, gen_border('top'), pg.Color('black'))
+        pg.gfxdraw.filled_polygon(screen, gen_border('right'), pg.Color('black'))
+        pg.gfxdraw.filled_polygon(screen, gen_border('bottom'), pg.Color('black'))
+        pg.gfxdraw.filled_polygon(screen, gen_border('left'), pg.Color('black'))
