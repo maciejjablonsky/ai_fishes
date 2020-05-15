@@ -16,7 +16,7 @@ class Environment:
         self.qtree = None
         self.update_qtree()
 
-    def get_state(self):        
+    def get_state(self):
         return {
             'fishes': self.fishes,
             'predators': self.predators,
@@ -33,14 +33,15 @@ class Environment:
             self.find_neighbours(predator)
         for agent in self.fishes + self.predators:
             agent.update(dtime)
-        self.update_qtree()
 
+        self.update_qtree()
 
     def update_qtree(self):
         """ qtree takes center x, y and then width and heigth, so region is described as (x - w, y - h, x + w, y + h)"""
         w, h = cfg.borders()
         self.qtree = Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
-        [self.qtree.insert((agent.get_x(), agent.get_y(), agent)) for agent in self.fishes]
+        [self.qtree.insert((agent.get_x(), agent.get_y(), agent))
+         for agent in self.fishes]
 
     def find_neighbours(self, agent: Agent):
         reaction_area = agent.reaction_area()
