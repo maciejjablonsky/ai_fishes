@@ -1,6 +1,6 @@
 {
   "fish": {
-    "amount": 100,
+    "amount": 500,
     "dim": [15, 10],
     "velocity":{
       "start": 50,
@@ -13,11 +13,11 @@
     "dim": [20, 13],
     "amount": 5,
     "velocity":{
-      "start": 50, 
-      "max": 50
+      "start": 100, 
+      "max": 200
     },
     "reaction_radius":100,
-    "vision_angle": 300
+    "vision_angle": 100
   },
   "environment": {
     "name": "AIFishes",

@@ -24,7 +24,7 @@ def fish_sprite():
 def fish_shape():
     w, h = cfg.fish()['dim']
     vec = pg.Vector2
-    return np.array([vec(-w/2, -h/2), vec(w/2, 0), vec(-w/2, h/2)])
+    return [vec(-w/2, -h/2), vec(w/2, 0), vec(-w/2, h/2)]
 
 class Fish(Agent):
     def __init__(self):

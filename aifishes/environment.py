@@ -29,9 +29,11 @@ class Environment:
             predator.apply_force(acc)
             predator.hunt(self.find_neighbours(predator))
             self.find_neighbours(predator)
+        self.fishes = [fish for fish in self.fishes if fish.alive]
         for agent in self.fishes + self.predators:
             agent.update(dtime)
         self.update_qtree()
+        print(len(self.fishes))
 
     def update_qtree(self):
         """ qtree takes center x, y and then width and heigth, so region is described as (x - w, y - h, x + w, y + h)"""

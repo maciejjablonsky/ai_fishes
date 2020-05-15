@@ -2,6 +2,8 @@ import numpy as np
 import aifishes.config as cfg
 import typing
 import pygame as pg
+import scipy as scp
+from shapely.geometry import Polygon
 
 
 def random_position():
@@ -59,6 +61,10 @@ class Agent:
         """Name must be 'get_y' for smartquadtree integration"""
         return self.position[1]
 
+    def get_hitbox(self):
+        # TODO implement hitbox
+        raise NotImplementedError
+
     def update(self, dtime):
         self.update_velocity(dtime)
         self.limit_velocity()
@@ -77,4 +83,19 @@ class Agent:
 
     def get_hitbox(self):
         velocity_angle = X_AXIS_VEC.angle_to(self.velocity)
-        return np.array([self.position + point.rotate(velocity_angle) for point in self.hitbox], dtype=np.float32)
+        return np.array([point.rotate(velocity_angle) + self.position for point in self.hitbox], dtype=np.float32)
+
+    def collide(self, obj):
+        obj_hitbox = Polygon(obj.get_hitbox())
+        self_hitbox = Polygon(self.get_hitbox())
+        return self_hitbox.intersects(obj_hitbox)
+
+    def find_collisions(self, surroundings):
+        collisions = []
+        for obj in surroundings:
+            if self.collide(obj):
+                collisions.append(obj)
+        return collisions
+
+    def ate(self):
+        self.alive = False

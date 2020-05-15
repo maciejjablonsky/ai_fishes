@@ -2,6 +2,7 @@ import numpy as np
 import aifishes.config as cfg
 from aifishes import agent
 from aifishes.agent import Agent, random_position, random_velocity
+from aifishes.fish import Fish
 import pygame as pg
 
 PREDATOR_COLOR = pg.Color('orangered1')
@@ -92,5 +93,11 @@ class Predator(Agent):
             self.debug_hunt(surroundings)
         closest = self.choose_closest(surroundings)
         if closest is not None:
-            self.velocity = self.velocity.lerp(
-                self.velocity.magnitude() * (closest.position - self.position),  0.01)
+            self.velocity  = self.velocity.lerp(self.velocity.magnitude() * (closest.position - self.position),  0.9)
+        
+        #TODO surroundings are only agents who are in reaction area but is that the case?
+        dinner = self.find_collisions(surroundings) #crappy but funny
+        for dish in dinner:
+            if isinstance(dish,Fish):
+                dish.ate()
+
