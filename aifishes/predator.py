@@ -5,7 +5,7 @@ from aifishes.agent import Agent, random_position, random_velocity
 from aifishes.fish import Fish
 import pygame as pg
 
-PREDATOR_COLOR = pg.Color('orangered1')
+PREDATOR_COLOR = pg.Color('darkblue')
 PREDATOR_SPRITE = None
 
 DEBUG_HUNT = False

@@ -9,7 +9,7 @@ import math
 
 COLORS = pg.colordict.THECOLORS
 
-SCREEN_COLOR = COLORS['darkmagenta']
+SCREEN_COLOR = COLORS['royalblue1']
 SHOW_FPS = True
 DEBUG = False
 
