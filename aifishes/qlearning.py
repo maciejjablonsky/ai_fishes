@@ -58,7 +58,7 @@ class QLearning():
         actions = self.qtable[x, y, :]
         return self.create_acceleraion(actions)
 
-    def discretized(selfs, point, range_of_point, resolution):
+    def discretized(self, point, range_of_point, resolution):
         return int((point / range_of_point) * resolution)
 
     def create_acceleraion(self,actions):

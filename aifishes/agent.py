@@ -8,9 +8,10 @@ from shapely.geometry import Polygon
 
 def random_position():
     borders = cfg.borders()
+    tolerance = cfg.environment()['border_tolerance']
     return pg.Vector2(
-        scale(np.random.rand(), [0, 1], [0, borders[0]]),
-        scale(np.random.rand(), [0, 1], [0, borders[1]])
+        scale(np.random.rand(), [0, 1], [tolerance, borders[0] - tolerance]),
+        scale(np.random.rand(), [0, 1], [tolerance, borders[1] - tolerance])
     )
 
 
