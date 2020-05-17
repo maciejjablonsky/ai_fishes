@@ -23,7 +23,7 @@ class Game:
         pg.font.init()
         self.font = pg.font.Font(None, 30)
         self.running = False
-        self.qlearing = ql.QLearing(cfg.qlearing()['resolution'], cfg.environment()['dim'])
+        self.qlearing = ql.QLearing()
 
     def setup(self):
         cfg.load_config()
