@@ -27,7 +27,9 @@ class Environment:
         self.fishes = [Fish() for _ in range(cfg.fish_amount())]
         self.predators = [Predator() for _ in range(cfg.predator_amount())]
         self.qtree = None
+        self.last_states = {}
         self.update_qtree()
+
 
     def get_state(self):
         return {
@@ -45,11 +47,13 @@ class Environment:
             predator.hunt(self.find_neighbours(predator))
             self.find_neighbours(predator)
         self.kill_all_emigrants()
+        self.last_states['all_fishes'] = self.fishes
         self.fishes = [fish for fish in self.fishes if fish.alive]
         self.predators = [predator for predator in self.predators if predator.alive]
         for agent in self.fishes + self.predators:
             agent.update(dtime)       
         self.update_qtree()
+
 
     def kill_all_emigrants(self):
         tolerance = cfg.environment()['border_tolerance']
@@ -84,3 +88,4 @@ class Environment:
         pg.gfxdraw.filled_polygon(screen, gen_border('right'), pg.Color('black'))
         pg.gfxdraw.filled_polygon(screen, gen_border('bottom'), pg.Color('black'))
         pg.gfxdraw.filled_polygon(screen, gen_border('left'), pg.Color('black'))
+

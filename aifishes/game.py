@@ -3,7 +3,7 @@ import pygame.gfxdraw
 from aifishes.environment import Environment
 from aifishes.time import Time
 import aifishes.config as cfg
-import aifishes.qlearning as qlearn
+import aifishes.qlearning as ql
 import numpy as np
 import math
 
@@ -23,6 +23,7 @@ class Game:
         pg.font.init()
         self.font = pg.font.Font(None, 30)
         self.running = False
+        self.qlearing = ql.QLearing(cfg.qlearing()['resolution'], cfg.environment()['dim'])
 
     def setup(self):
         cfg.load_config()
@@ -32,7 +33,7 @@ class Game:
     def update(self):
         agents = self.environment.get_state()
 
-        fish_acc = qlearn.qlearing(agents['fishes'])
+        fish_acc = self.qlearing.next_step(self.environment.last_states)
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': fish_acc,

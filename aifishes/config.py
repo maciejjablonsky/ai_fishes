@@ -49,4 +49,7 @@ def predator():
 def environment():
     return get_config()['environment']
 
+def qlearing():
+    return get_config()['qlearning']
+
 
