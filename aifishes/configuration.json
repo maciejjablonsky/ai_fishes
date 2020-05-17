@@ -11,7 +11,7 @@
   },
   "predator": {
     "dim": [20, 13],
-    "amount": 5,
+    "amount": 3,
     "velocity":{
       "start": 100, 
       "max": 200
@@ -22,6 +22,12 @@
   "environment": {
     "name": "AIFishes",
     "dim": [1280, 720],
-    "border_tolerance": 5
+    "border_tolerance": 50
+  },
+  "qlearning": {
+    "resolution": [20, 20],
+    "alfa": 0.96,
+    "number_of_directions": 8,
+    "print_grid": true
   }
 }
