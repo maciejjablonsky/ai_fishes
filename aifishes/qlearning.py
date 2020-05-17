@@ -39,9 +39,12 @@ class QLearning():
         reward = 0
         if not alive:
             reward = -200
+        self.qtable *= 0.9999999
         x = self.discretized(position[0], self.dim[0], self.resolution[0])
         y = self.discretized(position[1], self.dim[1], self.resolution[1])
         action = self.action_reader(velocity)
+        if x >= 30 or y >= 30:
+            print(position[0], position[1])  # Bug Here
         self.qtable[x, y, action] += self.alfa * reward
         return
 
@@ -67,8 +70,10 @@ class QLearning():
         for i, action in enumerate(actions):
             temp.from_polar((action, i *(360/ self.number_of_directions)))
             acceleration += temp
-
         return acceleration
+
+    def clear_qtable(self):
+        self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
 
     def print_grid(self):
         screen = pg.display.get_surface()
@@ -81,12 +86,11 @@ class QLearning():
 
 
     def arrow_sprite(self):
-
         dim = np.array([self.dim[0] / self.resolution[0] / 2, self.dim[1] / self.resolution[1] / 2])
         surf = pg.Surface(dim, pg.SRCALPHA)
         shape = np.array([[0, 0.5 * dim[1] - 1],
                           [0.5 * dim[0], 0.5 * dim[1] - 1],
-                          [0.5 * dim[0], 0 + 3],
+                          [0.5 * dim[0], 0 + 2],
                           [dim[0], 0.5 * dim[1]],
                           [0.5 * dim[0], dim[1] - 3],
                           [0.5 * dim[0], 0.5 * dim[1] + 1],
@@ -104,7 +108,7 @@ class QLearning():
             for j in range(self.resolution[1]):
                 actions = self.qtable[i, j, :]
                 vec = self.create_acceleraion(actions)
-                if abs(vec.length()) > 5:
+                if abs(vec.length()) > 3:
                     angle = vec.angle_to(X_AXIS_VEC)
                     self.showable_sprite = pg.transform.rotate(self.ARROW_SPRITE, angle)
                     screen.blit(self.showable_sprite, [space_x/4 + i * space_x, space_y/4 + j * space_y])

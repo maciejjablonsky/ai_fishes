@@ -79,4 +79,6 @@ class Game:
                     pred.DEBUG_HUNT = not pred.DEBUG_HUNT
                 if event.key == pg.K_1:
                     ql.QDEBUG = not ql.QDEBUG
+                if event.key == pg.K_t:
+                    self.qlearning.clear_qtable()
 

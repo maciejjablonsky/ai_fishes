@@ -2,7 +2,6 @@ import numpy as np
 import aifishes.config as cfg
 import typing
 import pygame as pg
-import scipy as scp
 from shapely.geometry import Polygon
 
 
