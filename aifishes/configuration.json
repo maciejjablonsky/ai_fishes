@@ -1,6 +1,6 @@
 {
   "fish": {
-    "amount": 500,
+    "amount": 1000,
     "dim": [15, 10],
     "velocity":{
       "start": 50,
@@ -11,13 +11,13 @@
   },
   "predator": {
     "dim": [20, 13],
-    "amount": 3,
+    "amount": 0,
     "velocity":{
       "start": 100, 
       "max": 200
     },
-    "reaction_radius":100,
-    "vision_angle": 100
+    "reaction_radius":200,
+    "vision_angle": 360
   },
   "environment": {
     "name": "AIFishes",
@@ -25,9 +25,10 @@
     "border_tolerance": 50
   },
   "qlearning": {
-    "resolution": [20, 20],
+    "resolution": [30, 30],
     "alfa": 0.96,
     "number_of_directions": 8,
-    "print_grid": true
+    "print_grid": true,
+    "print_vectors": true
   }
 }

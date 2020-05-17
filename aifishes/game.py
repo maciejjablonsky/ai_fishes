@@ -23,7 +23,7 @@ class Game:
         pg.font.init()
         self.font = pg.font.Font(None, 30)
         self.running = False
-        self.qlearing = ql.QLearing()
+        self.qlearning = ql.QLearning()
 
     def setup(self):
         cfg.load_config()
@@ -33,7 +33,7 @@ class Game:
     def update(self):
         agents = self.environment.get_state()
 
-        fish_acc = self.qlearing.next_step(self.environment.last_states)
+        fish_acc = self.qlearning.next_step(self.environment.last_states)
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': fish_acc,
@@ -77,3 +77,6 @@ class Game:
                 if event.key == pg.K_h:
                     import aifishes.predator as pred
                     pred.DEBUG_HUNT = not pred.DEBUG_HUNT
+                if event.key == pg.K_1:
+                    ql.QDEBUG = not ql.QDEBUG
+
