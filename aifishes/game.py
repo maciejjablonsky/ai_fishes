@@ -3,8 +3,10 @@ import pygame.gfxdraw
 from aifishes.environment import Environment
 from aifishes.time import Time
 import aifishes.config as cfg
+import aifishes.qlearning as qlearn
 import numpy as np
 import math
+
 COLORS = pg.colordict.THECOLORS
 
 SCREEN_COLOR = COLORS['darkmagenta']
@@ -30,11 +32,10 @@ class Game:
     def update(self):
         agents = self.environment.get_state()
 
-        # MAREK SANDBOX
-
+        fish_acc = qlearn.qlearing(agents['fishes'])
         data = {
             'dtime': self.time.get_dtime(),
-            'fish_acc': [pg.Vector2(0,0)] * len(agents['fishes']),
+            'fish_acc': fish_acc,
             'predator_acc': [pg.Vector2(0, 0)] * len(agents['predators']),
         }             
         self.environment.frame(data)

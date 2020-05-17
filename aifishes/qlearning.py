@@ -1,2 +1,4 @@
+import pygame as pg
 
-def qlearing():
+def qlearing(agents):
+    return [pg.Vector2(100, 0)] * len(agents)
