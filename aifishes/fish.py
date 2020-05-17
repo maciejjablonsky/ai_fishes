@@ -5,7 +5,7 @@ from aifishes import agent
 from aifishes.agent import Agent, random_position, random_velocity
 import pygame as pg
 
-FISH_COLOR = pg.Color('chartreuse')
+FISH_COLOR = pg.Color('seashell2')
 FISH_SPRITE = None
 
 
