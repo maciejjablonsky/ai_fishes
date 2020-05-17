@@ -12,12 +12,25 @@ FISH_SPRITE = None
 def fish_sprite():
     global FISH_SPRITE
     if FISH_SPRITE is None:
-        dim = np.array(cfg.fish_dim())
-        surf = pg.Surface(dim, pg.SRCALPHA)
-        shape = np.array([[0, 0], [dim[0], 0.5 * dim[1]],[0, dim[1]]], dtype=np.float32)
+        w,h = np.array(cfg.fish()['dim'])
+        surf = pg.Surface((w,h), pg.SRCALPHA)
+        left_x = np.array([0, 0.25, 0.5, 0], dtype=np.float32) * w
+        left_y = np.array([0, 1/4, 7/8, 1], dtype=np.float32) * h
+        middle_x = np.array([0.25, 0.5, 0.75, 0.5], dtype=np.float32) * w
+        middle_y = np.array([1/4, 3/8, 3/4, 7/8], dtype=np.float32) * h
+        right_x = np.array([0.5, 1, 0.75], dtype=np.float32) * w
+        right_y = np.array([3/8, 0.5, 3/4], dtype=np.float32) * h
+        left = np.c_[left_x, left_y]
+        middle = np.c_[middle_x, middle_y]
+        right = np.c_[right_x, right_y]
+        pg.gfxdraw.filled_polygon(surf, left, pg.Color('orange'))
+        pg.gfxdraw.filled_polygon(surf, middle, pg.Color('white'))
+        pg.gfxdraw.filled_polygon(surf, right, pg.Color('orange'))
+        # left = np.array([0,0],[0.25*w, 7*w])
+        # shape = np.array([[0, 0], [dim[0], 0.5 * dim[1]],[0, dim[1]]], dtype=np.float32)
 
-        pg.gfxdraw.aapolygon(surf, shape, FISH_COLOR)
-        pg.gfxdraw.filled_polygon(surf, shape, FISH_COLOR)
+        # pg.gfxdraw.aapolygon(surf, shape, FISH_COLOR)
+        # pg.gfxdraw.filled_polygon(surf, shape, FISH_COLOR)
         FISH_SPRITE = surf
     return FISH_SPRITE
 
