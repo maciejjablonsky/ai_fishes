@@ -16,11 +16,11 @@ def fish_sprite():
         surf = pg.Surface((w, h), pg.SRCALPHA)
         level_of_disability = 0.13
         left_x = np.array([0, 0.25, 0.5, 0], dtype=np.float32) * w
-        left_y = np.array([0, 1 / 4 - OFFEST, 7 / 8 - OFFEST, 1], dtype=np.float32) * h
+        left_y = np.array([0, 1 / 4 - level_of_disability, 7 / 8 - level_of_disability, 1], dtype=np.float32) * h
         middle_x = np.array([0.25, 0.5, 0.75, 0.5], dtype=np.float32) * w
-        middle_y = np.array([1 / 4 - OFFEST, 3 / 8 - OFFEST, 3 / 4 - OFFEST, 7 / 8 - OFFEST], dtype=np.float32) * h
+        middle_y = np.array([1 / 4 - level_of_disability, 3 / 8 - level_of_disability, 3 / 4 - level_of_disability, 7 / 8 - level_of_disability], dtype=np.float32) * h
         right_x = np.array([0.5, 1, 0.75], dtype=np.float32) * w
-        right_y = np.array([3 / 8 - OFFEST, 0.5, 3 / 4 - OFFEST], dtype=np.float32) * h
+        right_y = np.array([3 / 8 - level_of_disability, 0.5, 3 / 4 - level_of_disability], dtype=np.float32) * h
         pg.draw.line(surf, pg.Color('Black'), [0, 0], [2, 2])
         left = np.c_[left_x, left_y]
         middle = np.c_[middle_x, middle_y]
@@ -30,6 +30,8 @@ def fish_sprite():
         pg.gfxdraw.filled_polygon(surf, right, pg.Color('darkorange1'))
         pg.draw.line(surf, pg.Color('black'), [middle_x[0], middle_y[0]], [middle_x[3], middle_y[3]], 4)
         pg.draw.line(surf, pg.Color('black'), [middle_x[1], middle_y[1]], [middle_x[2], middle_y[2]], 4)
+        eye = np.array([int(0.8 * w), int(0.48 * h)])
+        pg.draw.circle(surf,pg.Color('black'), eye, 4, 3)
         # left = np.array([0,0],[0.25*w, 7*w])
         # shape = np.array([[0, 0], [dim[0], 0.5 * dim[1]],[0, dim[1]]], dtype=np.float32)
 
