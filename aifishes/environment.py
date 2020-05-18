@@ -29,7 +29,7 @@ class Environment:
         self.qtree = None
         self.last_states = {}
         self.update_qtree()
-
+        self.deaths = 0
 
     def get_state(self):
         return {
@@ -48,7 +48,7 @@ class Environment:
             self.find_neighbours(predator)
         self.kill_all_emigrants()
         self.last_states['all_fishes'] = self.fishes
-        self.fishes = [fish for fish in self.fishes if fish.alive]
+        self.delete_dead_fishes()
         self.predators = [predator for predator in self.predators if predator.alive]
         for agent in self.fishes + self.predators:
             agent.update(dtime)       
@@ -81,6 +81,11 @@ class Environment:
         self.qtree.set_mask(reaction_area)
         neighbours = self.qtree.elements()
         return [element[2] for element in neighbours]
+
+    def delete_dead_fishes(self):
+        number_of_fishes = len(self.fishes)
+        self.fishes = [fish for fish in self.fishes if fish.alive]
+        self.deaths += number_of_fishes - len(self.fishes)
 
     def debug_print(self):
         screen = pg.display.get_surface()
