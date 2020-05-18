@@ -52,4 +52,6 @@ def environment():
 def qlearing():
     return get_config()['qlearning']
 
+def game():
+    return get_config()['game']
 

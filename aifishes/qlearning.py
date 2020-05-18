@@ -6,28 +6,63 @@ from aifishes.agent import X_AXIS_VEC
 QDEBUG = False
 
 class QLearning():
-    def __init__(self):
+    def __init__(self, game):
+        self.environment = None
+        self.game = game
         self.dim = cfg.environment()['dim']
         self.resolution = cfg.qlearing()['resolution']
         self.alpha = cfg.qlearing()['alpha']
         self.epsilon = cfg.qlearing()['epsilon']
         self.gamma = cfg.qlearing()['gamma']
+        self.LEARNING = cfg.qlearing()['learning']
         self.number_of_directions = cfg.qlearing()['number_of_directions']
-        self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
+        self.qtable = self.load_qtable()
+        self.tick = 0
+        self.epoch = 0
+        self.max_epochs = cfg.qlearing()['max_epochs']
+        self.max_ticks = cfg.qlearing()['max_ticks']
         # Debug
         self.grid = cfg.qlearing()['print_grid']
         self.arrows = cfg.qlearing()['print_vectors']
         if self.arrows:
             self.ARROW_SPRITE = self.arrow_sprite()
 
-    def next_step(self, last_states):
-        if not last_states:
+    def next_step(self):
+        if not self.environment.last_states:
             return [pg.Vector2(0, 0)]
+        if self.LEARNING:
+            return self.learning_process()
+        else:
+            return self.read_from_qtable()
+
+    def learning_process(self):
         self.debug_print()
         acceleration_table = []
-        for agent in last_states['all_fishes']:
+        for agent in self.environment.last_states['all_fishes']:
             acceleration = self.get_acceleration(agent.position)
             self.update_qtable(agent)
+            acceleration_table.append(acceleration)
+        self.tick += 1
+        if self.tick == self.max_ticks:
+            self.next_epoch()
+            return [pg.Vector2(0, 0)]
+        if self.epoch == self.max_epochs:
+            self.game.running = False
+        return acceleration_table
+
+    def next_epoch(self):
+        self.tick = 0
+        self.epoch += 1
+        survival_percentage = ((cfg.fish()['amount'] - self.environment.deaths) / cfg.fish()['amount']) * 100
+        self.game.setup()
+        self.save_qtable()
+        print("Epoch: %d, Survival percentage: %d%%" % (self.epoch, survival_percentage))
+
+    def read_from_qtable(self):
+        self.debug_print()
+        acceleration_table = []
+        for agent in self.environment.last_states['all_fishes']:
+            acceleration = self.get_acceleration(agent.position)
             acceleration_table.append(acceleration)
         return acceleration_table
 
@@ -36,16 +71,18 @@ class QLearning():
         self.qtable *= self.epsilon
         x, y, action = self.get_state(agent)
         predicted_x, predicted_y = self.predict_next_state(x, y, agent.velocity)
-
-        if x >= self.resolution[0] or y >= self.resolution[1]:
-            x, y = self.resolution[0] - 1, self.resolution[1] - 1 # Bug Here
-            print(agent.position[0], agent.position[1])
-        self.qtable[x, y, action] += self.alpha * reward
+        predicted_awards_array = self.qtable[predicted_x, predicted_y, :]
+        predicted_award = (max(predicted_awards_array) + min(predicted_awards_array)) / 2
+        self.qtable[x, y, action] += self.alpha * (reward + self.gamma * predicted_award - self.qtable[x, y, action])
         return
 
-    def predict_next_state(self, x, y, velocity):
-        pass
-        return x, y
+    def predict_next_state(self, x, y, velocity: pg.Vector2):
+        vector_norm = velocity.normalize()
+        predicted_x = int(round(x + vector_norm[0]))
+        predicted_y = int(round(y + vector_norm[1]))
+        predicted_x = max(min(predicted_x, self.resolution[0] - 1), 0)
+        predicted_y = max(min(predicted_y, self.resolution[1] - 1), 0)
+        return predicted_x, predicted_y
 
     def get_reward(self, agent):
         reward = 0
@@ -82,6 +119,20 @@ class QLearning():
             temp.from_polar((action, i *(360/ self.number_of_directions)))
             acceleration += temp
         return acceleration
+
+    def set_environment(self, environment):
+        self.environment = environment
+
+    def load_qtable(self):
+        if self.LEARNING:
+            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
+        try:
+            return np.load('qtable.npy')
+        except IOError:
+            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
+
+    def save_qtable(self):
+        np.save('qtable.npy', self.qtable)
 
     def clear_qtable(self):
         self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
