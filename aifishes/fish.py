@@ -28,10 +28,11 @@ def fish_sprite():
         pg.gfxdraw.filled_polygon(surf, left, pg.Color('darkorange1'))
         pg.gfxdraw.filled_polygon(surf, middle, pg.Color('seashell2'))
         pg.gfxdraw.filled_polygon(surf, right, pg.Color('darkorange1'))
-        pg.draw.line(surf, pg.Color('black'), [middle_x[0], middle_y[0]], [middle_x[3], middle_y[3]], 4)
-        pg.draw.line(surf, pg.Color('black'), [middle_x[1], middle_y[1]], [middle_x[2], middle_y[2]], 4)
-        eye = np.array([int(0.8 * w), int(0.48 * h)])
-        pg.draw.circle(surf,pg.Color('black'), eye, 4, 3)
+        if w >= 30 and h >= 10:
+            pg.draw.line(surf, pg.Color('black'), [middle_x[0], middle_y[0]], [middle_x[3], middle_y[3]], int(w/30))
+            pg.draw.line(surf, pg.Color('black'), [middle_x[1], middle_y[1]], [middle_x[2], middle_y[2]], int(w/30))
+            eye = np.array([int(0.8 * w), int(0.48 * h)])
+            pg.draw.circle(surf, pg.Color('black'), eye, int(w/30), int(w/30))
         # left = np.array([0,0],[0.25*w, 7*w])
         # shape = np.array([[0, 0], [dim[0], 0.5 * dim[1]],[0, dim[1]]], dtype=np.float32)
 
