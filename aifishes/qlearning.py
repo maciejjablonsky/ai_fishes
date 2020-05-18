@@ -67,9 +67,9 @@ class QLearning():
         return acceleration_table
 
     def update_qtable(self, agent):
-        reward = self.get_reward(agent)
         self.qtable *= self.epsilon
         x, y, action = self.get_state(agent)
+        reward = self.get_reward(agent, x, y, action)
         predicted_x, predicted_y = self.predict_next_state(x, y, agent.velocity)
         predicted_awards_array = self.qtable[predicted_x, predicted_y, :]
         predicted_award = (max(predicted_awards_array) + min(predicted_awards_array)) / 2
@@ -84,7 +84,7 @@ class QLearning():
         predicted_y = max(min(predicted_y, self.resolution[1] - 1), 0)
         return predicted_x, predicted_y
 
-    def get_reward(self, agent):
+    def get_reward(self, agent, x, y, action):
         reward = 0
         if not agent.alive:
             reward = -200

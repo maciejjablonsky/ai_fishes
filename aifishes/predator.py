@@ -19,6 +19,7 @@ def predator_sprite():
         shape = np.array([[0, 0], [w, h/2], [0, h]], dtype=np.float32)
         pg.gfxdraw.aapolygon(surf, shape, PREDATOR_COLOR)
         pg.gfxdraw.filled_polygon(surf, shape, PREDATOR_COLOR)
+        pg.draw.line(surf, pg.Color('Gray'), [w/9, h/2], [w/3, h/2], 2)
         PREDATOR_SPRITE = surf
     return PREDATOR_SPRITE
 
@@ -92,7 +93,7 @@ class Predator(Agent):
             self.debug_hunt(surroundings)
         closest = self.choose_closest(surroundings)
         if closest is not None:
-            self.velocity  = self.velocity.lerp(self.velocity.magnitude() * (closest.position - self.position),  0.9)
+            self.velocity  = self.velocity.lerp(self.velocity.magnitude() * (closest.position - self.position),  0.005)
         
         #TODO surroundings are only agents who are in reaction area but is that the case?
         dinner = self.find_collisions(surroundings) #crappy but funny
