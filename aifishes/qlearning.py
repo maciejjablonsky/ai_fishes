@@ -9,7 +9,9 @@ class QLearning():
     def __init__(self):
         self.dim = cfg.environment()['dim']
         self.resolution = cfg.qlearing()['resolution']
-        self.alfa = cfg.qlearing()['alfa']
+        self.alpha = cfg.qlearing()['alpha']
+        self.epsilon = cfg.qlearing()['epsilon']
+        self.gamma = cfg.qlearing()['gamma']
         self.number_of_directions = cfg.qlearing()['number_of_directions']
         self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
         # Debug
@@ -19,34 +21,43 @@ class QLearning():
             self.ARROW_SPRITE = self.arrow_sprite()
 
     def next_step(self, last_states):
-        if QDEBUG:
-            if self.grid:
-                self.print_grid()
-            if self.arrows:
-                self.print_arrows()
-        if last_states:
-            acc_table = []
-            for fish in last_states['all_fishes']:
-                self.update_qtable(fish.position, fish.velocity, fish.alive)
-            for fish in last_states['all_fishes']:
-                new_action = self.action_selection(fish.position)
-                acc_table.append(new_action)
-            return acc_table
-        else:
+        if not last_states:
             return [pg.Vector2(0, 0)]
+        self.debug_print()
+        acceleration_table = []
+        for agent in last_states['all_fishes']:
+            acceleration = self.get_acceleration(agent.position)
+            self.update_qtable(agent)
+            acceleration_table.append(acceleration)
+        return acceleration_table
 
-    def update_qtable(self, position, velocity, alive):
-        reward = 0
-        if not alive:
-            reward = -200
-        self.qtable *= 0.9999999
-        x = self.discretized(position[0], self.dim[0], self.resolution[0])
-        y = self.discretized(position[1], self.dim[1], self.resolution[1])
-        action = self.action_reader(velocity)
-        if x >= 30 or y >= 30:
-            print(position[0], position[1])  # Bug Here
-        self.qtable[x, y, action] += self.alfa * reward
+    def update_qtable(self, agent):
+        reward = self.get_reward(agent)
+        self.qtable *= self.epsilon
+        x, y, action = self.get_state(agent)
+        predicted_x, predicted_y = self.predict_next_state(x, y, agent.velocity)
+
+        if x >= self.resolution[0] or y >= self.resolution[1]:
+            x, y = self.resolution[0] - 1, self.resolution[1] - 1 # Bug Here
+            print(agent.position[0], agent.position[1])
+        self.qtable[x, y, action] += self.alpha * reward
         return
+
+    def predict_next_state(self, x, y, velocity):
+        pass
+        return x, y
+
+    def get_reward(self, agent):
+        reward = 0
+        if not agent.alive:
+            reward = -200
+        return reward
+
+    def get_state(self, agent):
+        x = self.discretized(agent.position[0], self.dim[0], self.resolution[0])
+        y = self.discretized(agent.position[1], self.dim[1], self.resolution[1])
+        action = self.action_reader(agent.velocity)
+        return x, y, action
 
     def action_reader(self, vector: pg.Vector2):
         angle = X_AXIS_VEC.angle_to(vector)
@@ -55,7 +66,7 @@ class QLearning():
             angle = angle + 360
         return int(((angle + offset) / 360) * self.number_of_directions) % self.number_of_directions
 
-    def action_selection(self, position):
+    def get_acceleration(self, position):
         x = self.discretized(position[0], self.dim[0], self.resolution[0])
         y = self.discretized(position[1], self.dim[1], self.resolution[1])
         actions = self.qtable[x, y, :]
@@ -74,6 +85,13 @@ class QLearning():
 
     def clear_qtable(self):
         self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
+
+    def debug_print(self):
+        if QDEBUG:
+            if self.grid:
+                self.print_grid()
+            if self.arrows:
+                self.print_arrows()
 
     def print_grid(self):
         screen = pg.display.get_surface()

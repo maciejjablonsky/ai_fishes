@@ -1,7 +1,7 @@
 {
   "fish": {
-    "amount": 1000,
-    "dim": [15, 10],
+    "amount": 100,
+    "dim": [30, 15],
     "velocity":{
       "start": 50,
       "max": 100
@@ -26,7 +26,9 @@
   },
   "qlearning": {
     "resolution": [30, 30],
-    "alfa": 0.96,
+    "alpha": 0.96,
+    "gamma": 0.81,
+    "epsilon": 0.99999,
     "number_of_directions": 8,
     "print_grid": true,
     "print_vectors": true
