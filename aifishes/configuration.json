@@ -1,7 +1,10 @@
 {
+  "game": {
+    "draw": true
+  },
   "fish": {
-    "amount": 100,
-    "dim": [30, 15],
+    "amount": 1000,
+    "dim": [20, 10],
     "velocity":{
       "start": 50,
       "max": 100
@@ -22,15 +25,18 @@
   "environment": {
     "name": "AIFishes",
     "dim": [1280, 720],
-    "border_tolerance": 50
+    "border_tolerance": 5
   },
   "qlearning": {
     "resolution": [30, 30],
-    "alpha": 0.96,
-    "gamma": 0.81,
-    "epsilon": 0.99999,
+    "alpha": 0.82,
+    "gamma": 0.97,
+    "epsilon": 1,
     "number_of_directions": 8,
-    "print_grid": true,
+    "learning": false,
+    "max_epochs": 5,
+    "max_ticks": 100,
+    "print_grid": false,
     "print_vectors": true
   }
 }

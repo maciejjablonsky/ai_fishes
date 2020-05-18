@@ -17,23 +17,27 @@ DEBUG = False
 class Game:
     def __init__(self):
         pg.init()
+        self.DRAW = cfg.game()['draw']
         self.environment = None
-        self.screen = pg.display.set_mode(cfg.borders()) 
+        if self.DRAW:
+            self.screen = pg.display.set_mode(cfg.borders())
         self.time = Time()
         pg.font.init()
         self.font = pg.font.Font(None, 30)
         self.running = False
-        self.qlearning = ql.QLearning()
+        self.qlearning = ql.QLearning(self)
+
 
     def setup(self):
         cfg.load_config()
         self.environment = Environment()
+        self.qlearning.set_environment(self.environment)
         self.running = True
 
     def update(self):
         agents = self.environment.get_state()
 
-        fish_acc = self.qlearning.next_step(self.environment.last_states)
+        fish_acc = self.qlearning.next_step()
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': fish_acc,
@@ -59,9 +63,11 @@ class Game:
     def run(self):
         while self.running:
             self.events()
-            self.screen.fill(SCREEN_COLOR)
+            if self.DRAW:
+                self.screen.fill(SCREEN_COLOR)
             self.update()
-            self.draw()
+            if self.DRAW:
+                self.draw()
             self.time.tick()
 
     def events(self):
@@ -81,4 +87,6 @@ class Game:
                     ql.QDEBUG = not ql.QDEBUG
                 if event.key == pg.K_t:
                     self.qlearning.clear_qtable()
+                if event.key == pg.K_s:
+                    self.qlearning.save_qtable()
 
