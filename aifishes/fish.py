@@ -14,7 +14,7 @@ def fish_sprite():
     if FISH_SPRITE is None:
         w, h = np.array(cfg.fish()['dim'])
         surf = pg.Surface((w, h), pg.SRCALPHA)
-        OFFEST = 0.13
+        level_of_disability = 0.13
         left_x = np.array([0, 0.25, 0.5, 0], dtype=np.float32) * w
         left_y = np.array([0, 1 / 4 - OFFEST, 7 / 8 - OFFEST, 1], dtype=np.float32) * h
         middle_x = np.array([0.25, 0.5, 0.75, 0.5], dtype=np.float32) * w
