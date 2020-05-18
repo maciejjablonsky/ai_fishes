@@ -25,9 +25,11 @@ def fish_sprite():
         left = np.c_[left_x, left_y]
         middle = np.c_[middle_x, middle_y]
         right = np.c_[right_x, right_y]
-        pg.gfxdraw.filled_polygon(surf, left, pg.Color('orange'))
-        pg.gfxdraw.filled_polygon(surf, middle, pg.Color('white'))
-        pg.gfxdraw.filled_polygon(surf, right, pg.Color('orange'))
+        pg.gfxdraw.filled_polygon(surf, left, pg.Color('darkorange1'))
+        pg.gfxdraw.filled_polygon(surf, middle, pg.Color('seashell2'))
+        pg.gfxdraw.filled_polygon(surf, right, pg.Color('darkorange1'))
+        pg.draw.line(surf, pg.Color('black'), [middle_x[0], middle_y[0]], [middle_x[3], middle_y[3]], 4)
+        pg.draw.line(surf, pg.Color('black'), [middle_x[1], middle_y[1]], [middle_x[2], middle_y[2]], 4)
         # left = np.array([0,0],[0.25*w, 7*w])
         # shape = np.array([[0, 0], [dim[0], 0.5 * dim[1]],[0, dim[1]]], dtype=np.float32)
 
