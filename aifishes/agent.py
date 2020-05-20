@@ -71,6 +71,17 @@ class Agent:
         self.update_position(dtime)
         self.update_showable()
 
+    def choose_closest(self, surroundings):
+        min_distance = float('inf')
+        closest = None
+        if len(surroundings) > 0:
+            for neighbour in surroundings:
+                distance = self.position.distance_to(neighbour.position)
+                if distance < min_distance and neighbour is not self:
+                    min_distance = distance
+                    closest = neighbour
+        return closest
+
     def update_showable(self):
         angle = self.velocity.angle_to(X_AXIS_VEC)
         self.showable_sprite = pg.transform.rotate(self.original_sprite, angle)

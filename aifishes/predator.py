@@ -77,16 +77,6 @@ class Predator(Agent):
             pg.draw.circle(screen, (255, 0, 0), np.array(
                 each.position, dtype=np.int32), 10)
 
-    def choose_closest(self, surroundings):
-        min_distance = float('inf')
-        closest = None
-        if len(surroundings) > 0:
-            for neighbour in surroundings:
-                distance = self.position.distance_to(neighbour.position)
-                if distance < min_distance and not isinstance(neighbour, Predator) and neighbour is not self:
-                    min_distance = distance
-                    closest = neighbour
-        return closest
 
     def hunt(self, surroundings):
         if DEBUG_HUNT:
