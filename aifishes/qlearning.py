@@ -64,7 +64,7 @@ class QLearning():
         self.debug_print()
         acceleration_table = []
         for agent in self.environment.last_states['all_fishes']:
-            acceleration = self.get_acceleration(agent.position)
+            acceleration = self.get_acceleration(agent)
             acceleration_table.append(acceleration)
         return acceleration_table
 
