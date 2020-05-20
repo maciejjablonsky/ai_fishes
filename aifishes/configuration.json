@@ -3,24 +3,24 @@
     "draw": true
   },
   "fish": {
-    "amount": 1000,
-    "dim": [20, 10],
+    "amount": 100,
+    "dim": [40, 20],
     "velocity":{
-      "start": 50,
-      "max": 100
+      "start": 130,
+      "max": 150
     },
-    "reaction_radius": 50,
-    "vision_angle":300
+    "reaction_radius": 150,
+    "vision_angle":360
   },
   "predator": {
-    "dim": [20, 13],
-    "amount": 0,
+    "dim": [50, 23],
+    "amount": 2,
     "velocity":{
-      "start": 100, 
-      "max": 200
+      "start": 100,
+      "max": 120
     },
-    "reaction_radius":200,
-    "vision_angle": 360
+    "reaction_radius":120,
+    "vision_angle": 300
   },
   "environment": {
     "name": "AIFishes",
@@ -28,15 +28,16 @@
     "border_tolerance": 5
   },
   "qlearning": {
-    "resolution": [30, 30],
+    "resolution": [20, 20],
     "alpha": 0.82,
     "gamma": 0.97,
     "epsilon": 1,
     "number_of_directions": 8,
-    "learning": false,
-    "max_epochs": 5,
-    "max_ticks": 100,
-    "print_grid": false,
+    "learning": true,
+    "new_qtable": true,
+    "max_epochs": 50,
+    "max_ticks": 1000,
+    "print_grid": true,
     "print_vectors": true
   }
 }

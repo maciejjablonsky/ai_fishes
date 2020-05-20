@@ -80,7 +80,9 @@ class Environment:
         reaction_area = agent.reaction_area()
         self.qtree.set_mask(reaction_area)
         neighbours = self.qtree.elements()
-        return [element[2] for element in neighbours]
+        neighbours = [element[2] for element in neighbours]
+        neighbours = [neighbour for neighbour in neighbours if isinstance(neighbour, searched_class)]
+        return neighbours
 
     def delete_dead_fishes(self):
         number_of_fishes = len(self.fishes)

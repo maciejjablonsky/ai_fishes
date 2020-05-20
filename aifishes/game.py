@@ -89,4 +89,7 @@ class Game:
                     self.qlearning.clear_qtable()
                 if event.key == pg.K_s:
                     self.qlearning.save_qtable()
-
+                if event.key == pg.K_COMMA:
+                    self.qlearning.increase_debug_layer()
+                if event.key == pg.K_PERIOD:
+                    self.qlearning.decrease_debug_layer()

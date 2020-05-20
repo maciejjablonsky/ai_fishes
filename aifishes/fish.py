@@ -29,8 +29,8 @@ def fish_sprite():
         pg.gfxdraw.filled_polygon(surf, middle, pg.Color('seashell2'))
         pg.gfxdraw.filled_polygon(surf, right, pg.Color('darkorange1'))
         if w >= 30 and h >= 10:
-            pg.draw.line(surf, pg.Color('black'), [middle_x[0], middle_y[0]], [middle_x[3], middle_y[3]], int(w/30))
-            pg.draw.line(surf, pg.Color('black'), [middle_x[1], middle_y[1]], [middle_x[2], middle_y[2]], int(w/30))
+            pg.draw.aaline(surf, pg.Color('black'), [middle_x[0], middle_y[0]], [middle_x[3], middle_y[3]], int(w/30))
+            pg.draw.aaline(surf, pg.Color('black'), [middle_x[1], middle_y[1]], [middle_x[2], middle_y[2]], int(w/30))
             eye = np.array([int(0.8 * w), int(0.48 * h)])
             pg.draw.circle(surf, pg.Color('black'), eye, int(w/30), int(w/30))
         # left = np.array([0,0],[0.25*w, 7*w])
@@ -72,8 +72,6 @@ class Fish(Agent):
 
     def detect_predator(self, surroundings):
         self.closest_predator = self.choose_closest(surroundings)
-        if self.closest_predator is not None:
-            print(self.closest_predator.position)
 
 
     def debug_print(self, screen: pg.Surface):
@@ -81,4 +79,6 @@ class Fish(Agent):
         sprite_dim = pg.Vector2(self.showable_sprite.get_size())
         pg.draw.rect(screen, (0, 255, 0), pg.Rect(self.position - sprite_dim / 2, sprite_dim), 2)
         pg.draw.polygon(screen, (0, 0, 0), self.reaction_area(), 2)
+        if self.closest_predator is not None:
+            pg.draw.line(screen, pg.Color('gold1'), self.position, self.closest_predator.position, 2)
 

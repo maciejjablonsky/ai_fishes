@@ -15,6 +15,7 @@ class QLearning():
         self.epsilon = cfg.qlearing()['epsilon']
         self.gamma = cfg.qlearing()['gamma']
         self.LEARNING = cfg.qlearing()['learning']
+        self.NEW_QTABLE = cfg.qlearing()['new_qtable']
         self.number_of_directions = cfg.qlearing()['number_of_directions']
         self.qtable = self.load_qtable()
         self.tick = 0
@@ -24,6 +25,7 @@ class QLearning():
         # Debug
         self.grid = cfg.qlearing()['print_grid']
         self.arrows = cfg.qlearing()['print_vectors']
+        self.QDEBUG_LAYER = 0
         if self.arrows:
             self.ARROW_SPRITE = self.arrow_sprite()
 
@@ -39,7 +41,7 @@ class QLearning():
         self.debug_print()
         acceleration_table = []
         for agent in self.environment.last_states['all_fishes']:
-            acceleration = self.get_acceleration(agent.position)
+            acceleration = self.get_acceleration(agent)
             self.update_qtable(agent)
             acceleration_table.append(acceleration)
         self.tick += 1
@@ -68,12 +70,12 @@ class QLearning():
 
     def update_qtable(self, agent):
         self.qtable *= self.epsilon
-        x, y, action = self.get_state(agent)
+        x, y, danger_angle, action = self.get_state(agent)
         reward = self.get_reward(agent, x, y, action)
         predicted_x, predicted_y = self.predict_next_state(x, y, agent.velocity)
-        predicted_awards_array = self.qtable[predicted_x, predicted_y, :]
+        predicted_awards_array = self.qtable[predicted_x, predicted_y, 0, :]
         predicted_award = (max(predicted_awards_array) + min(predicted_awards_array)) / 2
-        self.qtable[x, y, action] += self.alpha * (reward + self.gamma * predicted_award - self.qtable[x, y, action])
+        self.qtable[x, y, danger_angle, action] += self.alpha * (reward + self.gamma * predicted_award - self.qtable[x, y, danger_angle, action])
         return
 
     def predict_next_state(self, x, y, velocity: pg.Vector2):
@@ -87,14 +89,26 @@ class QLearning():
     def get_reward(self, agent, x, y, action):
         reward = 0
         if not agent.alive:
-            reward = -200
+            reward -= 200
+        if agent.closest_predator is not None:
+            predator_vec = (agent.position - agent.closest_predator.position).normalize()
+            velocity_vec = agent.velocity.normalize()
+            reward += round((pg.Vector2(predator_vec + velocity_vec).length() - 1 ) * 100)
+
         return reward
 
     def get_state(self, agent):
         x = self.discretized(agent.position[0], self.dim[0], self.resolution[0])
         y = self.discretized(agent.position[1], self.dim[1], self.resolution[1])
+        danger_angle = self.get_angle_to_predator(agent, agent.closest_predator)
         action = self.action_reader(agent.velocity)
-        return x, y, action
+        return x, y, danger_angle, action
+
+    def get_angle_to_predator(self, agent, predator):
+        if predator is None:
+            return 0
+        direction_vec = (predator.position - agent.position).normalize()
+        return self.action_reader(direction_vec) + 1
 
     def action_reader(self, vector: pg.Vector2):
         angle = X_AXIS_VEC.angle_to(vector)
@@ -103,16 +117,15 @@ class QLearning():
             angle = angle + 360
         return int(((angle + offset) / 360) * self.number_of_directions) % self.number_of_directions
 
-    def get_acceleration(self, position):
-        x = self.discretized(position[0], self.dim[0], self.resolution[0])
-        y = self.discretized(position[1], self.dim[1], self.resolution[1])
-        actions = self.qtable[x, y, :]
+    def get_acceleration(self, agent):
+        x, y, danger_angle, action = self.get_state(agent)
+        actions = self.qtable[x, y, danger_angle, :]
         return self.create_acceleraion(actions)
 
     def discretized(self, point, range_of_point, resolution):
         return int((point / range_of_point) * resolution)
 
-    def create_acceleraion(self,actions):
+    def create_acceleraion(self, actions):
         temp = pg.Vector2(0, 0)
         acceleration = pg.Vector2(0,0)
         for i, action in enumerate(actions):
@@ -120,22 +133,29 @@ class QLearning():
             acceleration += temp
         return acceleration
 
+
     def set_environment(self, environment):
         self.environment = environment
 
     def load_qtable(self):
-        if self.LEARNING:
-            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
+        if self.NEW_QTABLE:
+            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, self.number_of_directions])
         try:
             return np.load('qtable.npy')
         except IOError:
-            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
+            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, self.number_of_directions])
 
     def save_qtable(self):
         np.save('qtable.npy', self.qtable)
 
     def clear_qtable(self):
-        self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions])
+        self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, self.number_of_directions])
+
+    def increase_debug_layer(self):
+        self.QDEBUG_LAYER = (self.QDEBUG_LAYER + 1) % (self.number_of_directions + 1)
+
+    def decrease_debug_layer(self):
+        self.QDEBUG_LAYER = (self.QDEBUG_LAYER - 1) % (self.number_of_directions + 1)
 
     def debug_print(self):
         if QDEBUG:
@@ -148,9 +168,9 @@ class QLearning():
         screen = pg.display.get_surface()
         space_x = self.dim[0] / self.resolution[0]
         space_y = self.dim[1] / self.resolution[1]
-        for i in range (self.resolution[0]):
+        for i in range(self.resolution[0]):
             pg.draw.line(screen, pg.Color('Black'), [i * space_x, 0], [i * space_x, self.dim[1]], 2)
-        for i in range (self.resolution[1]):
+        for i in range(self.resolution[1]):
             pg.draw.line(screen, pg.Color('Black'), [0, i * space_y], [self.dim[0], i * space_y], 2)
 
 
@@ -175,9 +195,9 @@ class QLearning():
         space_y = self.dim[1] / self.resolution[1]
         for i in range(self.resolution[0]):
             for j in range(self.resolution[1]):
-                actions = self.qtable[i, j, :]
+                actions = self.qtable[i, j, self.QDEBUG_LAYER, :]
                 vec = self.create_acceleraion(actions)
                 if abs(vec.length()) > 3:
                     angle = vec.angle_to(X_AXIS_VEC)
-                    self.showable_sprite = pg.transform.rotate(self.ARROW_SPRITE, angle)
-                    screen.blit(self.showable_sprite, [space_x/4 + i * space_x, space_y/4 + j * space_y])
+                    showable_sprite = pg.transform.rotate(self.ARROW_SPRITE, angle)
+                    screen.blit(showable_sprite, [space_x/4 + i * space_x, space_y/4 + j * space_y])
