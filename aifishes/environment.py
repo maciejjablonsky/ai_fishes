@@ -42,10 +42,10 @@ class Environment:
         dtime = data['dtime']
         for fish, acc in zip(self.fishes, data['fish_acc']):
             fish.apply_force(acc)
+            fish.detect_predator(self.find_neighbours(fish, Predator))
         for predator, acc in zip(self.predators, data['predator_acc']):
             predator.apply_force(acc)
-            predator.hunt(self.find_neighbours(predator))
-            self.find_neighbours(predator)
+            predator.hunt(self.find_neighbours(predator, Fish))
         self.kill_all_emigrants()
         self.last_states['all_fishes'] = self.fishes
         self.delete_dead_fishes()
@@ -76,7 +76,7 @@ class Environment:
         [self.qtree.insert((agent.get_x(), agent.get_y(), agent))
          for agent in self.fishes + self.predators]
 
-    def find_neighbours(self, agent: Agent):
+    def find_neighbours(self, agent: Agent, searched_class):
         reaction_area = agent.reaction_area()
         self.qtree.set_mask(reaction_area)
         neighbours = self.qtree.elements()

@@ -52,6 +52,7 @@ class Fish(Agent):
     def __init__(self):
         super().__init__(fish_sprite(), random_position(), random_velocity(cfg.fish_vel_start_magnitude()))
         self.hitbox = fish_shape()
+        self.closest_predator = None
 
     def limit_velocity(self):
         limit = cfg.fish_vel_max_magnitude()
@@ -69,8 +70,15 @@ class Fish(Agent):
         area = np.c_[x, y]
         return area + self.position
 
+    def detect_predator(self, surroundings):
+        self.closest_predator = self.choose_closest(surroundings)
+        if self.closest_predator is not None:
+            print(self.closest_predator.position)
+
+
     def debug_print(self, screen: pg.Surface):
         pg.draw.circle(screen, agent.DEBUG_POSITION_COLOR, np.array(self.position, dtype=np.int32), 5)
         sprite_dim = pg.Vector2(self.showable_sprite.get_size())
         pg.draw.rect(screen, (0, 255, 0), pg.Rect(self.position - sprite_dim / 2, sprite_dim), 2)
         pg.draw.polygon(screen, (0, 0, 0), self.reaction_area(), 2)
+
