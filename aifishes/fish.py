@@ -64,7 +64,7 @@ class Fish(Agent):
         vis_angle = cfg.fish()['vision_angle']
         start = agent.scale(direction_angle - vis_angle / 2, [0, 360], [0, 2 * np.pi])
         end = agent.scale(direction_angle + vis_angle / 2, [0, 360], [0, 2 * np.pi])
-        t = np.linspace(start, end, dtype=np.float32)
+        t = np.linspace(start, end, num=20, dtype=np.float32)
         x = np.append(0, radius * np.cos(t))
         y = np.append(0, radius * np.sin(t))
         area = np.c_[x, y]
