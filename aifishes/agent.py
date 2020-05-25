@@ -39,6 +39,7 @@ class Agent:
         self.velocity = velocity
         self.acceleration = pg.Vector2(0, 0)
         self.alive = True
+        self.closest_target = None
 
     def update_position(self, dtime):
         self.position += self.velocity * dtime
@@ -70,6 +71,10 @@ class Agent:
         self.limit_velocity()
         self.update_position(dtime)
         self.update_showable()
+
+
+    def detect_target(self, surroundings):
+        self.closest_target = self.choose_closest(surroundings)
 
     def choose_closest(self, surroundings):
         min_distance = float('inf')
