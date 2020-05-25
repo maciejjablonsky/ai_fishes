@@ -10,7 +10,7 @@ class Time():
     def tick(self):
         t = pg.time.get_ticks()
         self.dtime = (t - self.last_ticks) / 1000
-        self.dtime = min(self.dtime, 0.05)
+        self.dtime = min(self.dtime, 0.03)
         self.gtime += self.dtime
         self.last_ticks = t
         self.clock.tick()

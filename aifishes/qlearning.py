@@ -2,6 +2,7 @@ import pygame as pg
 import numpy as np
 import aifishes.config as cfg
 from aifishes.agent import X_AXIS_VEC
+from aifishes.fish import Fish
 
 QDEBUG = False
 
@@ -26,22 +27,24 @@ class QLearning():
         self.grid = cfg.qlearing()['print_grid']
         self.arrows = cfg.qlearing()['print_vectors']
         self.QDEBUG_LAYER = 0
+        self.AGENT_INDEX_DEBUG = 0
         if self.arrows:
             self.ARROW_SPRITE = self.arrow_sprite()
 
-    def next_step(self):
+    def next_step(self, agent_class):
+        agent_class_index = self.get_class(agent_class)
         if not self.environment.last_states:
             return [pg.Vector2(0, 0)]
         if self.LEARNING:
-            return self.learning_process()
+            return self.learning_process(agent_class_index)
         else:
-            return self.read_from_qtable()
+            return self.read_from_qtable(agent_class_index)
 
-    def learning_process(self):
+    def learning_process(self, agent_class_index):
         self.debug_print()
         acceleration_table = []
-        for agent in self.environment.last_states['all_fishes']:
-            acceleration = self.get_acceleration(agent)
+        for agent in self.get_agents(agent_class_index):
+            acceleration = self.get_acceleration(agent, agent_class_index)
             self.update_qtable(agent)
             acceleration_table.append(acceleration)
         self.tick += 1
@@ -55,27 +58,29 @@ class QLearning():
     def next_epoch(self):
         self.tick = 0
         self.epoch += 1
-        survival_percentage = ((cfg.fish()['amount'] - self.environment.deaths) / cfg.fish()['amount']) * 100
+        survival_percentage = 0
+        if cfg.fish()['amount'] > 0:
+            survival_percentage = ((cfg.fish()['amount'] - self.environment.deaths) / cfg.fish()['amount']) * 100
         self.game.setup()
         self.save_qtable()
         print("Epoch: %d, Survival percentage: %d%%" % (self.epoch, survival_percentage))
 
-    def read_from_qtable(self):
+    def read_from_qtable(self, agent_class_index):
         self.debug_print()
         acceleration_table = []
-        for agent in self.environment.last_states['all_fishes']:
-            acceleration = self.get_acceleration(agent)
+        for agent in self.get_agents(agent_class_index):
+            acceleration = self.get_acceleration(agent, agent_class_index)
             acceleration_table.append(acceleration)
         return acceleration_table
 
     def update_qtable(self, agent):
         self.qtable *= self.epsilon
-        x, y, danger_angle, action = self.get_state(agent)
-        reward = self.get_reward(agent, x, y, action)
+        x, y, danger_angle, agent_class, action = self.get_state(agent)
+        reward = self.get_reward(agent, x, y, agent_class, action)
         predicted_x, predicted_y = self.predict_next_state(x, y, agent.velocity)
-        predicted_awards_array = self.qtable[predicted_x, predicted_y, 0, :]
+        predicted_awards_array = self.qtable[predicted_x, predicted_y, 0, agent_class, :]
         predicted_award = (max(predicted_awards_array) + min(predicted_awards_array)) / 2
-        self.qtable[x, y, danger_angle, action] += self.alpha * (reward + self.gamma * predicted_award - self.qtable[x, y, danger_angle, action])
+        self.qtable[x, y, danger_angle, agent_class, action] += self.alpha * (reward + self.gamma * predicted_award - self.qtable[x, y, danger_angle, agent_class, action])
         return
 
     def predict_next_state(self, x, y, velocity: pg.Vector2):
@@ -86,23 +91,30 @@ class QLearning():
         predicted_y = max(min(predicted_y, self.resolution[1] - 1), 0)
         return predicted_x, predicted_y
 
-    def get_reward(self, agent, x, y, action):
+    def get_reward(self, agent, x, y, agent_class, action):
         reward = 0
         if not agent.alive:
-            reward -= 200
-        if agent.closest_predator is not None:
-            predator_vec = (agent.position - agent.closest_predator.position).normalize()
+            reward -= 1000
+        if agent.closest_target is not None:
+            target_vec = (agent.position - agent.closest_target.position).normalize()
             velocity_vec = agent.velocity.normalize()
-            reward += round((pg.Vector2(predator_vec + velocity_vec).length() - 1 ) * 100)
+            if agent_class == 0:
+                reward += round((pg.Vector2(target_vec + velocity_vec).length() - 1 ) * 200)
+            else:
+                reward -= round((pg.Vector2(target_vec + velocity_vec).length() - 1) * 400)
+                if agent.closest_target.alive == 0:
+                    reward += 500
+
 
         return reward
 
     def get_state(self, agent):
         x = self.discretized(agent.position[0], self.dim[0], self.resolution[0])
         y = self.discretized(agent.position[1], self.dim[1], self.resolution[1])
-        danger_angle = self.get_angle_to_predator(agent, agent.closest_predator)
+        danger_angle = self.get_angle_to_predator(agent, agent.closest_target)
+        agent_class = self.get_class(agent)
         action = self.action_reader(agent.velocity)
-        return x, y, danger_angle, action
+        return x, y, danger_angle, agent_class, action
 
     def get_angle_to_predator(self, agent, predator):
         if predator is None:
@@ -117,9 +129,9 @@ class QLearning():
             angle = angle + 360
         return int(((angle + offset) / 360) * self.number_of_directions) % self.number_of_directions
 
-    def get_acceleration(self, agent):
-        x, y, danger_angle, action = self.get_state(agent)
-        actions = self.qtable[x, y, danger_angle, :]
+    def get_acceleration(self, agent, agent_class_index):
+        x, y, danger_angle,agent_class_index, action = self.get_state(agent)
+        actions = self.qtable[x, y, danger_angle, agent_class_index, :]
         return self.create_acceleraion(actions)
 
     def discretized(self, point, range_of_point, resolution):
@@ -133,29 +145,46 @@ class QLearning():
             acceleration += temp
         return acceleration
 
+    def get_class(self, agent):
+        if agent == Fish:
+            return 0
+        else:
+            if isinstance(agent, Fish):
+                return 0
+            else:
+                return 1
+
+    def get_agents(self, agent_class_index):
+        if agent_class_index == 0:
+            return self.environment.last_states['all_fishes']
+        else:
+            return self.environment.last_states['all_predators']
 
     def set_environment(self, environment):
         self.environment = environment
 
     def load_qtable(self):
         if self.NEW_QTABLE:
-            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, self.number_of_directions])
+            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, 2, self.number_of_directions])
         try:
             return np.load('qtable.npy')
         except IOError:
-            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, self.number_of_directions])
+            return np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, 2, self.number_of_directions])
 
     def save_qtable(self):
         np.save('qtable.npy', self.qtable)
 
     def clear_qtable(self):
-        self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, self.number_of_directions])
+        self.qtable = np.zeros([self.resolution[0], self.resolution[1], self.number_of_directions + 1, 2, self.number_of_directions])
 
     def increase_debug_layer(self):
         self.QDEBUG_LAYER = (self.QDEBUG_LAYER + 1) % (self.number_of_directions + 1)
 
     def decrease_debug_layer(self):
         self.QDEBUG_LAYER = (self.QDEBUG_LAYER - 1) % (self.number_of_directions + 1)
+
+    def change_agent_debug(self):
+        self.AGENT_INDEX_DEBUG = (self.AGENT_INDEX_DEBUG + 1) % 2
 
     def debug_print(self):
         if QDEBUG:
@@ -195,7 +224,7 @@ class QLearning():
         space_y = self.dim[1] / self.resolution[1]
         for i in range(self.resolution[0]):
             for j in range(self.resolution[1]):
-                actions = self.qtable[i, j, self.QDEBUG_LAYER, :]
+                actions = self.qtable[i, j, self.QDEBUG_LAYER, self.AGENT_INDEX_DEBUG, :]
                 vec = self.create_acceleraion(actions)
                 if abs(vec.length()) > 3:
                     angle = vec.angle_to(X_AXIS_VEC)

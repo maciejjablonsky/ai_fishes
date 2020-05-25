@@ -1,6 +1,8 @@
 import pygame as pg
 import pygame.gfxdraw
 from aifishes.environment import Environment
+from aifishes.fish import Fish
+from aifishes.predator import Predator
 from aifishes.time import Time
 import aifishes.config as cfg
 import aifishes.qlearning as ql
@@ -37,11 +39,13 @@ class Game:
     def update(self):
         agents = self.environment.get_state()
 
-        fish_acc = self.qlearning.next_step()
+        fish_acc = self.qlearning.next_step(Fish)
+        predator_acc = self.qlearning.next_step(Predator)
+
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': fish_acc,
-            'predator_acc': [pg.Vector2(0, 0)] * len(agents['predators']),
+            'predator_acc': predator_acc,
         }             
         self.environment.frame(data)
 
@@ -93,3 +97,5 @@ class Game:
                     self.qlearning.increase_debug_layer()
                 if event.key == pg.K_PERIOD:
                     self.qlearning.decrease_debug_layer()
+                if event.key == pg.K_SLASH:
+                    self.qlearning.change_agent_debug()
