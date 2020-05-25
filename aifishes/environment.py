@@ -26,7 +26,8 @@ class Environment:
     def __init__(self):
         self.fishes = [Fish() for _ in range(cfg.fish_amount())]
         self.predators = [Predator() for _ in range(cfg.predator_amount())]
-        self.qtree = None
+        self.fish_qtree = None
+        self.predator_qtree = None
         self.last_states = {}
         self.update_qtree()
         self.deaths = 0
@@ -35,7 +36,6 @@ class Environment:
         return {
             'fishes': self.fishes,
             'predators': self.predators,
-            'qtree': self.qtree
         }
 
     def frame(self, data: dict):
@@ -59,30 +59,44 @@ class Environment:
     def kill_all_emigrants(self):
         tolerance = cfg.environment()['border_tolerance']
         emigrants = []
-        self.qtree.set_mask(gen_border('top'))
-        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.qtree.elements()]]
-        self.qtree.set_mask(gen_border('right'))
-        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.qtree.elements()]]
-        self.qtree.set_mask(gen_border('bottom'))
-        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.qtree.elements()]]
-        self.qtree.set_mask(gen_border('left'))
-        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.qtree.elements()]]
+        self.fish_qtree.set_mask(gen_border('top'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
+        self.fish_qtree.set_mask(gen_border('right'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
+        self.fish_qtree.set_mask(gen_border('bottom'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
+        self.fish_qtree.set_mask(gen_border('left'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
+        self.predator_qtree.set_mask(gen_border('top'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
+        self.predator_qtree.set_mask(gen_border('right'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
+        self.predator_qtree.set_mask(gen_border('bottom'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
+        self.predator_qtree.set_mask(gen_border('left'))
+        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
         [emigrant.die() for emigrant in emigrants]
         
 
     def update_qtree(self):
         """ qtree takes center x, y and then width and heigth, so region is described as (x - w, y - h, x + w, y + h)"""
         w, h = cfg.borders()
-        self.qtree = Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
-        [self.qtree.insert((agent.get_x(), agent.get_y(), agent))
-         for agent in self.fishes + self.predators]
+        self.fish_qtree = Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
+        [self.fish_qtree.insert((agent.get_x(), agent.get_y(), agent))
+         for agent in self.fishes]
+        self.predator_qtree = Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
+        [self.predator_qtree.insert((agent.get_x(), agent.get_y(), agent))
+         for agent in self.predators]
 
     def find_neighbours(self, agent: Agent, searched_class):
         reaction_area = agent.reaction_area()
-        self.qtree.set_mask(reaction_area)
-        neighbours = self.qtree.elements()
+        if searched_class == Fish:
+            self.fish_qtree.set_mask(reaction_area)
+            neighbours = self.fish_qtree.elements()
+        else:
+            self.predator_qtree.set_mask(reaction_area)
+            neighbours = self.predator_qtree.elements()
         neighbours = [element[2] for element in neighbours]
-        neighbours = [neighbour for neighbour in neighbours if isinstance(neighbour, searched_class)]
         return neighbours
 
     def delete_dead_fishes(self):
