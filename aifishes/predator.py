@@ -59,6 +59,8 @@ class Predator(Agent):
         # pg.draw.rect(screen, (0, 255, 0), pg.Rect(
             # self.position - sprite_dim/2, sprite_dim), 2)
         pg.draw.polygon(screen, (0, 0, 0), self.reaction_area(), 2)
+        if self.closest_target is not None:
+            pg.draw.line(screen, pg.Color('red'), self.position, self.closest_target.position, 2)
 
         # axis_len = 200
         # X axis
@@ -69,25 +71,28 @@ class Predator(Agent):
         #     self.position + axis_len * agent.Y_AXIS_VEC, dtype=np.int32), 2)
 
         # pg.draw.line(screen, pg.Color('cyan'), self.position, self.position + axis_len * self.velocity.normalize(), 2)
-        
-
     def debug_hunt(self, surroundings):
         screen = pg.display.get_surface()
         for each in surroundings:
             pg.draw.circle(screen, (255, 0, 0), np.array(
                 each.position, dtype=np.int32), 10)
 
+    def detect_target(self, surroundings):
+        super().detect_target(surroundings)
+        self.dinner(surroundings)
 
     def hunt(self, surroundings):
         if DEBUG_HUNT:
             self.debug_hunt(surroundings)
         closest = self.choose_closest(surroundings)
         if closest is not None:
-            self.velocity  = self.velocity.lerp(self.velocity.magnitude() * (closest.position - self.position),  0.005)
+            self.velocity = self.velocity.lerp(self.velocity.magnitude() * (closest.position - self.position),  0.005)
         
         #TODO surroundings are only agents who are in reaction area but is that the case?
+        self.dinner(surroundings)
+
+    def dinner(self, surroundings):
         dinner = self.find_collisions(surroundings) #crappy but funny
         for dish in dinner:
-            if isinstance(dish,Fish):
+            if isinstance(dish, Fish):
                 dish.die()
-
