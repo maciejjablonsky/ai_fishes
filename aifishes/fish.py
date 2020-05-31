@@ -55,8 +55,9 @@ class Fish(Agent):
 
 
     def limit_velocity(self):
-        limit = cfg.fish_vel_max_magnitude()
-        return super().limit_velocity(limit=limit)
+        min_limit = cfg.fish()['velocity']['min']
+        max_limit = cfg.fish()['velocity']['max']
+        return super().limit_velocity(min_limit=min_limit, max_limit=max_limit)
 
     def reaction_area(self):
         direction_angle = agent.X_AXIS_VEC.angle_to(self.velocity)
@@ -69,6 +70,20 @@ class Fish(Agent):
         y = np.append(0, radius * np.sin(t))
         area = np.c_[x, y]
         return area + self.position
+
+    def safe_space(self):
+        direction_angle = agent.X_AXIS_VEC.angle_to(self.velocity)
+        r = cfg.fish()['safe_distance']
+        vis_angle = cfg.fish()['vision_angle']
+        start = agent.scale(direction_angle - vis_angle / 2, [0, 360], [0, 2 * np.pi])
+        end = agent.scale(direction_angle + vis_angle / 2, [0, 360], [0, 2 * np.pi])
+        t = np.linspace(start, end, num=20, dtype=np.float32)
+        x = np.append(0, r * np.cos(t))
+        y = np.append(0, r * np.sin(t))
+        area = np.c_[x, y]
+        return area + self.position
+
+
 
     def debug_print(self, screen: pg.Surface):
         pg.draw.circle(screen, agent.DEBUG_POSITION_COLOR, np.array(self.position, dtype=np.int32), 5)

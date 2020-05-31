@@ -4,7 +4,7 @@ class Time():
     def __init__(self):
         self.clock = pg.time.Clock()
         self.last_ticks = 0
-        self.dtime = 0
+        self.dtime = 0.06
         self.gtime = 0
 
     def tick(self):

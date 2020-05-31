@@ -44,9 +44,12 @@ class Agent:
     def update_position(self, dtime):
         self.position += self.velocity * dtime
 
-    def limit_velocity(self, limit=float('inf')):
-        if self.velocity.length() > limit:
-            self.velocity = limit * self.velocity.normalize()
+    def limit_velocity(self, min_limit=float('-inf'), max_limit=float('+inf')):
+        magnitude = self.velocity.magnitude()
+        if magnitude > max_limit:
+            self.velocity = max_limit * self.velocity.normalize()
+        if magnitude < min_limit:
+            self.velocity = min_limit * self.velocity.normalize()
 
     def update_velocity(self, dtime):
         self.velocity += self.acceleration * dtime
@@ -72,7 +75,6 @@ class Agent:
         self.update_position(dtime)
         self.update_showable()
 
-
     def detect_target(self, surroundings):
         self.closest_target = self.choose_closest(surroundings)
 
@@ -93,6 +95,9 @@ class Agent:
 
     def get_showable(self):
         return self.showable_sprite
+
+    def safe_space(self):
+        raise NotImplementedError()
 
     def reaction_area(self):
         raise NotImplementedError()

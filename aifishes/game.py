@@ -8,6 +8,7 @@ import aifishes.config as cfg
 import aifishes.qlearning as ql
 import numpy as np
 import math
+from aifishes.flocking_behavior import flocking_behavior
 
 COLORS = pg.colordict.THECOLORS
 
@@ -29,7 +30,6 @@ class Game:
         self.running = False
         self.qlearning = ql.QLearning(self)
 
-
     def setup(self):
         cfg.load_config()
         self.environment = Environment()
@@ -37,24 +37,28 @@ class Game:
         self.running = True
 
     def update(self):
-        agents = self.environment.get_state()
-
-        fish_acc = self.qlearning.next_step(Fish)
+        state = self.environment.get_state()
+        state['dtime'] = self.time.get_dtime()
+        fish_acc = [q if boid.closest_target is not None else f + q for boid, q, f in zip(state['fishes'], self.qlearning.next_step(Fish), flocking_behavior(state))]
+        # qlearning_acc = self.qlearning.next_step(Fish)
+        # fish_acc = flocking_behavior(state)
         predator_acc = self.qlearning.next_step(Predator)
 
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': fish_acc,
             'predator_acc': predator_acc,
-        }             
+        }
         self.environment.frame(data)
 
     def draw(self):
         state = self.environment.get_state()
         for agent in state['fishes'] + state['predators']:
             sprite = agent.get_showable()
-            self.screen.blit(sprite, agent.position - pg.Vector2(sprite.get_size()) / 2)
-            if DEBUG: agent.debug_print(self.screen)
+            self.screen.blit(sprite, agent.position -
+                             pg.Vector2(sprite.get_size()) / 2)
+            if DEBUG:
+                agent.debug_print(self.screen)
         if SHOW_FPS:
             self.blit_fps(self.time.get_fps())
         pg.display.flip()

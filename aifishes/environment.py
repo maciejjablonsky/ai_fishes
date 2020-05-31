@@ -36,6 +36,8 @@ class Environment:
         return {
             'fishes': self.fishes,
             'predators': self.predators,
+            'fishes_tree':self.fish_qtree,
+            'predators_tree':self.predator_qtree,
         }
 
     def frame(self, data: dict):
@@ -88,7 +90,9 @@ class Environment:
         [self.predator_qtree.insert((agent.get_x(), agent.get_y(), agent))
          for agent in self.predators]
 
-    def find_neighbours(self, agent: Agent, searched_class):
+    def find_neighbours(self, agent: Agent, searched_class = None):
+        if searched_class is None:
+            searched_class = agent.__class__
         reaction_area = agent.reaction_area()
         if searched_class == Fish:
             self.fish_qtree.set_mask(reaction_area)

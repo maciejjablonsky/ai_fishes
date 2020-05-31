@@ -35,8 +35,9 @@ class Predator(Agent):
         self.hitbox = predator_shape()
 
     def limit_velocity(self):
-        limit = cfg.predator_vel_max_magnitude()
-        return super().limit_velocity(limit=limit)
+        min_limit = cfg.predator()['velocity']['min']
+        max_limit = cfg.predator()['velocity']['max']
+        return super().limit_velocity(min_limit=min_limit, max_limit=max_limit)
 
     def reaction_area(self):
         direction_angle = agent.X_AXIS_VEC.angle_to(self.velocity)
