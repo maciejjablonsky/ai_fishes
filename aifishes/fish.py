@@ -63,12 +63,11 @@ class Fish(Agent):
 
     def reaction_area(self):
         if self.reaction is None:
-            # direction_angle = agent.X_AXIS_VEC.angle_to(self.velocity)
             radius = cfg.fish()['reaction_radius']
             vis_angle = cfg.fish()['vision_angle']
             start = agent.scale( - vis_angle / 2, [0, 360], [0, 2 * np.pi])
             end = agent.scale(vis_angle / 2, [0, 360], [0, 2 * np.pi])
-            t = np.linspace(start, end, num=10, dtype=np.float32)
+            t = np.linspace(start, end, num=8, dtype=np.float32)
             x = np.append(0, radius * np.cos(t))
             y = np.append(0, radius * np.sin(t))
             self.reaction = np.c_[x, y]
