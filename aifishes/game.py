@@ -21,6 +21,7 @@ class Game:
     def __init__(self):
         pg.init()
         self.DRAW = cfg.game()['draw']
+        self.flocking_on = cfg.flocking()['flocking_on']
         self.environment = None
         if self.DRAW:
             self.screen = pg.display.set_mode(cfg.borders())
@@ -29,6 +30,7 @@ class Game:
         self.font = pg.font.Font(None, 30)
         self.running = False
         self.qlearning = ql.QLearning(self)
+
 
     def setup(self):
         cfg.load_config()
@@ -39,17 +41,22 @@ class Game:
     def update(self):
         state = self.environment.get_state()
         state['dtime'] = self.time.get_dtime()
-        fish_acc = [q if boid.closest_target is not None else f + q for boid, q, f in zip(state['fishes'], self.qlearning.next_step(Fish), flocking_behavior(state))]
+        fish_acc = self.apply_behavior(state)
         # qlearning_acc = self.qlearning.next_step(Fish)
         # fish_acc = flocking_behavior(state)
         predator_acc = self.qlearning.next_step(Predator)
-
         data = {
             'dtime': self.time.get_dtime(),
             'fish_acc': fish_acc,
             'predator_acc': predator_acc,
         }
         self.environment.frame(data)
+
+    def apply_behavior(self, state):
+        if self.flocking_on:
+            return [q if boid.closest_target else f + q for boid, q, f in zip(state['fishes'], self.qlearning.next_step(Fish), flocking_behavior(state))]
+        else:
+            return self.qlearning.next_step(Fish)
 
     def draw(self):
         state = self.environment.get_state()
