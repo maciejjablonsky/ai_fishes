@@ -35,14 +35,18 @@ class Game:
         self.environment = Environment()
         self.qlearning.set_environment(self.environment)
         self.running = True
+        self.frame = 0
 
     def update(self):
         state = self.environment.get_state()
         state['dtime'] = self.time.get_dtime()
-        fish_acc = [q if boid.closest_target is not None else f + q for boid, q, f in zip(state['fishes'], self.qlearning.next_step(Fish), flocking_behavior(state))]
+
+
+        # fish_acc = [q if boid.closest_target is not None else f + q for boid, q, f in zip(
+        #     state['fishes'], self.qlearning.next_step(Fish), flocking_behavior(state))]
         # qlearning_acc = self.qlearning.next_step(Fish)
-        # fish_acc = flocking_behavior(state)
-        predator_acc = self.qlearning.next_step(Predator)
+        fish_acc = [] #flocking_behavior(state)
+        predator_acc = []# self.qlearning.next_step(Predator)
 
         data = {
             'dtime': self.time.get_dtime(),
@@ -52,16 +56,21 @@ class Game:
         self.environment.frame(data)
 
     def draw(self):
-        state = self.environment.get_state()
-        for agent in state['fishes'] + state['predators']:
+        # state = self.environment.get_state()
+        for agent in self.environment.fishes + self.environment.predators:
             sprite = agent.get_showable()
             self.screen.blit(sprite, agent.position -
                              pg.Vector2(sprite.get_size()) / 2)
             if DEBUG:
                 agent.debug_print(self.screen)
+        self.update_boids_vision()
         if SHOW_FPS:
-            self.blit_fps(self.time.get_fps())
+            self.blit_fps(self.time.get_fps())        
         pg.display.flip()
+
+    def update_boids_vision(self):
+        [boid.update_view() for boid in self.environment.fishes]        
+
 
     def blit_fps(self, fps):
         fps_view = self.font.render(
