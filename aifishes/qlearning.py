@@ -29,7 +29,7 @@ class QLearning():
         self.QDEBUG_LAYER = 0
         self.AGENT_INDEX_DEBUG = 0
         if self.arrows:
-            self.ARROW_SPRITE = self.arrow_sprite()
+            self.ARROW_FISH_SPRITE, self.ARROW_PREDATOR_SPRITE = self.arrow_sprite()
 
     def next_step(self, agent_class):
         agent_class_index = self.get_class(agent_class)
@@ -205,7 +205,8 @@ class QLearning():
 
     def arrow_sprite(self):
         dim = np.array([self.dim[0] / self.resolution[0] / 2, self.dim[1] / self.resolution[1] / 2])
-        surf = pg.Surface(dim, pg.SRCALPHA)
+        surfB = pg.Surface(dim, pg.SRCALPHA)
+        surfN = pg.Surface(dim, pg.SRCALPHA)
         shape = np.array([[0, 0.5 * dim[1] - 1],
                           [0.5 * dim[0], 0.5 * dim[1] - 1],
                           [0.5 * dim[0], 0 + 2],
@@ -214,9 +215,11 @@ class QLearning():
                           [0.5 * dim[0], 0.5 * dim[1] + 1],
                           [0, 0.5 * dim[1] + 1]], dtype=np.float32)
 
-        pg.gfxdraw.aapolygon(surf, shape, pg.Color('Black'))
-        pg.gfxdraw.filled_polygon(surf, shape, pg.Color('Black'))
-        return surf
+        pg.gfxdraw.aapolygon(surfB, shape, pg.Color('tomato4'))
+        pg.gfxdraw.filled_polygon(surfB, shape, pg.Color('tomato4'))
+        pg.gfxdraw.aapolygon(surfN, shape, pg.Color('Blue4'))
+        pg.gfxdraw.filled_polygon(surfN, shape, pg.Color('Blue4'))
+        return surfB, surfN
 
     def print_arrows(self):
         screen = pg.display.get_surface()
@@ -228,5 +231,8 @@ class QLearning():
                 vec = self.create_acceleraion(actions)
                 if abs(vec.length()) > 3:
                     angle = vec.angle_to(X_AXIS_VEC)
-                    showable_sprite = pg.transform.rotate(self.ARROW_SPRITE, angle)
+                    if self.AGENT_INDEX_DEBUG == 0:
+                        showable_sprite = pg.transform.rotate(self.ARROW_FISH_SPRITE, angle)
+                    else:
+                        showable_sprite = pg.transform.rotate(self.ARROW_PREDATOR_SPRITE, angle)
                     screen.blit(showable_sprite, [space_x/4 + i * space_x, space_y/4 + j * space_y])
