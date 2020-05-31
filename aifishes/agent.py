@@ -3,6 +3,7 @@ import aifishes.config as cfg
 import typing
 import pygame as pg
 from shapely.geometry import Polygon
+from aifishes.dqn_vision.boid_vision import boid_reaction_area_surface
 
 
 def random_position():
@@ -40,6 +41,9 @@ class Agent:
         self.acceleration = pg.Vector2(0, 0)
         self.alive = True
         self.closest_target = None
+        self.last_view = None
+        self.current_view = None
+        self.frame = 0 
 
     def update_position(self, dtime):
         self.position += self.velocity * dtime
@@ -50,6 +54,11 @@ class Agent:
             self.velocity = max_limit * self.velocity.normalize()
         if magnitude < min_limit:
             self.velocity = min_limit * self.velocity.normalize()
+
+    def update_view(self):
+        self.last_view = self.current_view
+        self.current_view = boid_reaction_area_surface(self, self.frame)
+        self.frame+= 1
 
     def update_velocity(self, dtime):
         self.velocity += self.acceleration * dtime
