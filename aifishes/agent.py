@@ -3,7 +3,7 @@ import aifishes.config as cfg
 import typing
 import pygame as pg
 from shapely.geometry import Polygon
-from aifishes.dqn_vision.boid_vision import boid_reaction_area_surface
+from aifishes.dqn_vision.boid_vision import extract_boid_view 
 
 
 def random_position():
@@ -57,8 +57,7 @@ class Agent:
 
     def update_view(self):
         self.last_view = self.current_view
-        self.current_view = boid_reaction_area_surface(self, self.frame)
-        self.frame+= 1
+        self.current_view = extract_boid_view(self.reaction_area(), self.position)
 
     def update_velocity(self, dtime):
         self.velocity += self.acceleration * dtime
@@ -74,15 +73,12 @@ class Agent:
         """Name must be 'get_y' for smartquadtree integration"""
         return self.position[1]
 
-    def get_hitbox(self):
-        # TODO implement hitbox
-        raise NotImplementedError
-
     def update(self, dtime):
         self.update_velocity(dtime)
         self.limit_velocity()
         self.update_position(dtime)
         self.update_showable()
+        self.frame+= 1
 
     def detect_target(self, surroundings):
         self.closest_target = self.choose_closest(surroundings)
