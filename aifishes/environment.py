@@ -48,14 +48,14 @@ class Environment:
         for predator, acc in zip(self.predators, data['predator_acc']):
             predator.apply_force(acc)
             predator.detect_target(self.find_neighbours(predator, Fish))
-        # self.kill_all_emigrants()
+        self.kill_all_emigrants()
         self.last_states['all_fishes'] = self.fishes
         self.last_states['all_predators'] = self.predators
         self.delete_dead_fishes()
         self.predators = [predator for predator in self.predators if predator.alive]
         for agent in self.fishes + self.predators:
             agent.update(dtime)       
-        # self.update_qtree()
+        self.update_qtree()
 
 
     def kill_all_emigrants(self):
