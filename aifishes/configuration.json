@@ -21,11 +21,11 @@
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 0,
+    "amount": 2,
     "velocity":{
       "start": 100,
       "min": 100,
-      "max": 200
+      "max": 150
     },
     "reaction_radius":100,
     "vision_angle": 300
@@ -33,7 +33,8 @@
   "environment": {
     "name": "AIFishes",
     "dim": [640, 640],
-    "border_tolerance": 5
+    "border_tolerance": 5,
+    "turning_tolerance": 20
   },
   "qlearning": {
     "resolution": [20, 20],
