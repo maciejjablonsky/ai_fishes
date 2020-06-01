@@ -3,8 +3,8 @@ import aifishes.config as cfg
 import typing
 import pygame as pg
 from shapely.geometry import Polygon
-from aifishes.dqn_vision.boid_vision import extract_boid_view 
-
+from aifishes.dqn_vision.boid_vision import extract_boid_view
+import math
 
 def random_position():
     borders = cfg.borders()
@@ -29,6 +29,7 @@ def scale(value, old, new):
 X_AXIS_VEC = pg.Vector2(1, 0)
 Y_AXIS_VEC = pg.Vector2(0, 1)
 DEBUG_POSITION_COLOR = pg.Color('green')
+SCREEN_WIDTH, SCREEN_HEIGHT = cfg.environment()['dim']
 
 
 class Agent:
@@ -43,7 +44,7 @@ class Agent:
         self.closest_target = None
         self.last_view = None
         self.current_view = None
-        self.frame = 0 
+        self.frame = 0
 
     def update_position(self, dtime):
         self.position += self.velocity * dtime
@@ -57,7 +58,8 @@ class Agent:
 
     def update_view(self):
         self.last_view = self.current_view
-        self.current_view = extract_boid_view(self.reaction_area(), self.position)
+        self.current_view = extract_boid_view(
+            self.reaction_area(), self.position)
 
     def update_velocity(self, dtime):
         self.velocity += self.acceleration * dtime
@@ -78,21 +80,18 @@ class Agent:
         self.limit_velocity()
         self.update_position(dtime)
         self.update_showable()
-        self.frame+= 1
+        self.frame += 1
 
     def detect_target(self, surroundings):
         self.closest_target = self.choose_closest(surroundings)
 
     def choose_closest(self, surroundings):
-        min_distance = float('inf')
-        closest = None
-        if len(surroundings) > 0:
-            for neighbour in surroundings:
-                distance = self.position.distance_to(neighbour.position)
-                if distance < min_distance and neighbour is not self:
-                    min_distance = distance
-                    closest = neighbour
-        return closest
+        if len(surroundings) == 0:
+            return None
+        def distance(agent): 
+           return math.sqrt((self.position.x - agent.position.x) **2 + (self.position.y - agent.position.y)**2)
+        surroundings.sort(key=distance)        
+        return surroundings[0]
 
     def update_showable(self):
         angle = self.velocity.angle_to(X_AXIS_VEC)
@@ -125,3 +124,8 @@ class Agent:
 
     def die(self):
         self.alive = False
+
+    def steer_to_center(self):
+        to_center = pg.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2) - self.position
+        # to_center.scale_to_length(self.velocity.length())
+        self.velocity = self.velocity.lerp(to_center, 0.2) 

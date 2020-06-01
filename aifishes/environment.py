@@ -5,22 +5,29 @@ from aifishes.predator import Predator
 from smartquadtree import Quadtree
 from aifishes.agent import Agent
 import numpy as np
+from shapely.geometry import Polygon, Point
+from typing import List
 
 QTREE_THRESHOLD = 4
 
-def gen_border(*kwargs):
+
+def gen_border(*args, **kwargs):
     w, h = cfg.environment()['dim']
-    tolerance = cfg.environment()['border_tolerance']
-    if 'top' in kwargs:
+    tolerance = kwargs['tolerance']
+    if 'top' in args:
         return np.array([[-tolerance, -tolerance], [w + tolerance, -tolerance], [w + tolerance, tolerance], [-tolerance, tolerance]])
-    elif 'right' in kwargs:
-        return np.array([[w - tolerance, -tolerance], [w + tolerance, - tolerance], [w + tolerance, h + tolerance],[w - tolerance, h + tolerance]])
-    elif 'bottom' in kwargs:
+    elif 'right' in args:
+        return np.array([[w - tolerance, -tolerance], [w + tolerance, - tolerance], [w + tolerance, h + tolerance], [w - tolerance, h + tolerance]])
+    elif 'bottom' in args:
         return np.array([[-tolerance, -tolerance + h], [w + tolerance, -tolerance + h], [w + tolerance, tolerance + h], [-tolerance, tolerance + h]])
     elif 'left':
-        return np.array([[-tolerance, -tolerance], [tolerance, -tolerance], [tolerance, h + tolerance],[-tolerance, h + tolerance]])
+        return np.array([[-tolerance, -tolerance], [tolerance, -tolerance], [tolerance, h + tolerance], [-tolerance, h + tolerance]])
     else:
         raise NotImplemented()
+
+BORDERS_NAMES = ['top', 'right', 'bottom', 'left']
+TURNING_BORDERS :List[Polygon]= [Polygon(gen_border(border, tolerance=cfg.environment()['turning_tolerance'])) for border in BORDERS_NAMES]
+
 
 class Environment:
     def __init__(self):
@@ -45,9 +52,12 @@ class Environment:
         for fish, acc in zip(self.fishes, data['fish_acc']):
             fish.apply_force(acc)
             # fish.detect_target(self.find_neighbours(fish, Predator))
-        for predator, acc in zip(self.predators, data['predator_acc']):
-            predator.apply_force(acc)
-            predator.detect_target(self.find_neighbours(predator, Fish))
+        for predator in self.predators:
+            if self.is_agent_withing_turning_area(predator):
+                predator.steer_to_center()
+            else:
+                predator.hunt(self.find_neighbours(predator, Fish))
+
         self.kill_all_emigrants()
         self.last_states['all_fishes'] = self.fishes
         self.last_states['all_predators'] = self.predators
@@ -61,21 +71,21 @@ class Environment:
     def kill_all_emigrants(self):
         tolerance = cfg.environment()['border_tolerance']
         emigrants = []
-        self.fish_qtree.set_mask(gen_border('top'))
+        self.fish_qtree.set_mask(gen_border('top', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
-        self.fish_qtree.set_mask(gen_border('right'))
+        self.fish_qtree.set_mask(gen_border('right', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
-        self.fish_qtree.set_mask(gen_border('bottom'))
+        self.fish_qtree.set_mask(gen_border('bottom', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
-        self.fish_qtree.set_mask(gen_border('left'))
+        self.fish_qtree.set_mask(gen_border('left', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
-        self.predator_qtree.set_mask(gen_border('top'))
+        self.predator_qtree.set_mask(gen_border('top', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
-        self.predator_qtree.set_mask(gen_border('right'))
+        self.predator_qtree.set_mask(gen_border('right', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
-        self.predator_qtree.set_mask(gen_border('bottom'))
+        self.predator_qtree.set_mask(gen_border('bottom', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
-        self.predator_qtree.set_mask(gen_border('left'))
+        self.predator_qtree.set_mask(gen_border('left', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
         [emigrant.die() for emigrant in emigrants]
         
@@ -115,3 +125,8 @@ class Environment:
         pg.gfxdraw.filled_polygon(screen, gen_border('bottom'), pg.Color('black'))
         pg.gfxdraw.filled_polygon(screen, gen_border('left'), pg.Color('black'))
 
+    def is_agent_withing_turning_area(self, agent:Agent):
+        for border in TURNING_BORDERS:
+            if border.contains(Point(agent.position)):
+                return True
+        return False
