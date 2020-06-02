@@ -6,6 +6,7 @@ from shapely.geometry import Polygon
 from aifishes.environment.boid_vision import extract_boid_view
 import math
 
+
 def random_position():
     borders = cfg.borders()
     tolerance = cfg.environment()['border_tolerance']
@@ -33,7 +34,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = cfg.environment()['dim']
 
 
 class Agent:
-    def __init__(self, sprite: pg.Surface, position: pg.Vector2, velocity: pg.Vector2):
+    def __init__(self, sprite: pg.Surface, position: pg.Vector2, velocity: pg.Vector2, reaction_radius: float):
         self.original_sprite = sprite
         self.showable_sprite = None
         self.hitbox = None
@@ -48,6 +49,31 @@ class Agent:
         self.learning = False
         self.reward = 0
         self.update_showable()
+        self.reaction_radius = reaction_radius
+        self.origin_reaction_area = None
+        self._reaction_area = None
+        self.create_reaction_area()
+        self.update_reaction_area()
+
+    def create_reaction_area(self, vision_angle=360, n=10):
+        vision_angle = cfg.fish()['vision_angle']
+        start = scale(- vision_angle / 2, [0, 360], [0, 2 * np.pi])
+        end = scale(vision_angle / 2, [0, 360], [0, 2 * np.pi])
+        t = np.linspace(start, end, num=n,  dtype=np.float32)
+        x = np.append(0, self.reaction_radius * np.cos(t))
+        y = np.append(0, self.reaction_radius * np.sin(t))
+        self.origin_reaction_area = np.c_[x, y]
+
+    def update_reaction_area(self):
+        direction = self.velocity.normalize()
+        ''' this is rotation matrix with following sin and cos values of velocity angle'''
+        rotation_matrix = np.array(
+            ((direction[0],  -direction[1]), (direction[1], direction[0])))
+        self._reaction_area = np.array([rotation_matrix.dot(
+            point) for point in self.origin_reaction_area]) + self.position
+
+    def reaction_area(self):
+        return self._reaction_area
 
     def update_position(self, dtime):
         self.position += self.velocity * dtime
@@ -60,7 +86,8 @@ class Agent:
             self.velocity = min_limit * self.velocity.normalize()
 
     def init_view(self):
-        self.last_view = self.current_view = extract_boid_view(self.reaction_area(), self.position)
+        self.last_view = self.current_view = extract_boid_view(
+            self.reaction_area(), self.position)
 
     def update_view(self):
         self.last_view = self.current_view
@@ -70,8 +97,11 @@ class Agent:
     def update_velocity(self, dtime):
         self.velocity += self.acceleration * dtime
 
-    def apply_force(self, acceleration: pg.Vector2):
+    def set_acceleration(self, acceleration: pg.Vector2):
         self.acceleration = acceleration
+
+    def apply_force(self, acceleration: pg.Vector2):
+        self.acceleration += acceleration
 
     def get_x(self):
         """Name must be 'get_x' for smartquadtree integration"""
@@ -86,6 +116,7 @@ class Agent:
         self.limit_velocity()
         self.update_position(dtime)
         self.update_showable()
+        self.update_reaction_area()
         self.frame += 1
         self.reward = 1
 
@@ -95,9 +126,10 @@ class Agent:
     def choose_closest(self, surroundings):
         if len(surroundings) == 0:
             return None
-        def distance(agent): 
-           return math.sqrt((self.position.x - agent.position.x) **2 + (self.position.y - agent.position.y)**2)
-        surroundings.sort(key=distance)        
+
+        def distance(agent):
+            return math.sqrt((self.position.x - agent.position.x) ** 2 + (self.position.y - agent.position.y)**2)
+        surroundings.sort(key=distance)
         return surroundings[0]
 
     def update_showable(self):
@@ -108,9 +140,6 @@ class Agent:
         return self.showable_sprite
 
     def safe_space(self):
-        raise NotImplementedError()
-
-    def reaction_area(self):
         raise NotImplementedError()
 
     def get_hitbox(self):
@@ -135,5 +164,4 @@ class Agent:
 
     def steer_to_center(self):
         to_center = pg.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2) - self.position
-        # to_center.scale_to_length(self.velocity.length())
-        self.velocity = self.velocity.lerp(to_center, 0.2) 
+        self.velocity = self.velocity.lerp(to_center, 0.05)

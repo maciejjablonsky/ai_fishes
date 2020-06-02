@@ -31,27 +31,18 @@ def predator_shape():
 class Predator(Agent):
     def __init__(self):
         super().__init__(predator_sprite(), random_position(),
-                         random_velocity(cfg.predator_vel_start_magnitude()))
+                         random_velocity(cfg.predator_vel_start_magnitude()), cfg.predator()['reaction_radius'])
         self.hitbox = predator_shape()
+
+    def create_reaction_area(self):
+        vision_angle = cfg.predator()['vision_angle']
+        n = 8
+        return super().create_reaction_area(vision_angle=vision_angle, n=n)
 
     def limit_velocity(self):
         min_limit = cfg.predator()['velocity']['min']
         max_limit = cfg.predator()['velocity']['max']
         return super().limit_velocity(min_limit=min_limit, max_limit=max_limit)
-
-    def reaction_area(self):
-        direction_angle = agent.X_AXIS_VEC.angle_to(self.velocity)
-        radius = cfg.predator()['reaction_radius']
-        vision_angle = cfg.predator()['vision_angle']
-        start = agent.scale(direction_angle - vision_angle /
-                            2, [0, 360], [0, 2*np.pi])
-        end = agent.scale(direction_angle + vision_angle /
-                          2, [0, 360], [0, 2*np.pi])
-        t = np.linspace(start, end, num=20, dtype=np.float32)
-        x = np.append(0, radius * np.cos(t))
-        y = np.append(0, radius * np.sin(t))
-        area = np.c_[x, y]
-        return area + self.position
 
     def debug_print(self, screen: pg.Surface):
         pg.draw.circle(screen, pg.Color('green'), np.array(
@@ -72,6 +63,17 @@ class Predator(Agent):
         #     self.position + axis_len * agent.Y_AXIS_VEC, dtype=np.int32), 2)
 
         # pg.draw.line(screen, pg.Color('cyan'), self.position, self.position + axis_len * self.velocity.normalize(), 2)
+    def action(self, surroundings):
+        closest = self.choose_closest(surroundings)
+        if closest:
+            self.steer_to_closest(closest)
+            self.dinner(surroundings)
+        else:
+            self.steer_to_center()
+
+    def steer_to_closest(self, closest:Agent):
+        self.velocity = self.velocity.lerp(self.velocity.magnitude() * (closest.position - self.position),  0.005) 
+
     def debug_hunt(self, surroundings):
         screen = pg.display.get_surface()
         for each in surroundings:

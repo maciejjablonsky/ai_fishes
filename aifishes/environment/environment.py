@@ -7,6 +7,7 @@ from aifishes.environment.agent import Agent
 import numpy as np
 from shapely.geometry import Polygon, Point
 from typing import List
+from functools import reduce
 
 QTREE_THRESHOLD = 4
 
@@ -25,8 +26,10 @@ def gen_border(*args, **kwargs):
     else:
         raise NotImplemented()
 
+
 BORDERS_NAMES = ['top', 'right', 'bottom', 'left']
-TURNING_BORDERS :List[Polygon]= [Polygon(gen_border(border, tolerance=cfg.environment()['turning_tolerance'])) for border in BORDERS_NAMES]
+TURNING_BORDERS: List[Polygon] = [Polygon(gen_border(border, tolerance=cfg.environment()[
+                                          'turning_tolerance'])) for border in BORDERS_NAMES]
 
 
 class Environment:
@@ -38,20 +41,18 @@ class Environment:
         self.fish_qtree = None
         self.predator_qtree = None
         self.last_states = {
-            'all_fishes':self.fishes,
-            'all_predators':self.predators
+            'all_fishes': self.fishes,
+            'all_predators': self.predators
         }
         self.update_qtree()
         self.deaths = 0
-        self.max_lifetime = []
-        self.average_lifetime = []
 
     def get_state(self):
         return {
             'fishes': self.fishes,
             'predators': self.predators,
-            'fishes_tree':self.fish_qtree,
-            'predators_tree':self.predator_qtree,
+            'fishes_tree': self.fish_qtree,
+            'predators_tree': self.predator_qtree,
             'all_fishes': self.last_states['all_fishes'],
             'all_predators': self.last_states['all_predators']
         }
@@ -61,37 +62,44 @@ class Environment:
         for fish in self.fishes:
             if self.is_agent_withing_turning_area(fish):
                 fish.steer_to_center()
-            else:
-                pass
+            # else:
+            #     pass
                 # fish.apply_force(acc)
             # fish.detect_target(self.find_neighbours(fish, Predator))
         for predator in self.predators:
+            predator.set_acceleration(pg.Vector2(0,0))
             if self.is_agent_withing_turning_area(predator):
                 predator.steer_to_center()
             else:
-                predator.hunt(self.find_neighbours(predator, Fish))
-
+                predator.action(self.find_neighbours(predator, Fish))
+        self.separate_predators()
         self.kill_all_emigrants()
         self.last_states['all_fishes'] = self.fishes
         self.last_states['all_predators'] = self.predators
         self.delete_dead_fishes()
-        self.predators = [predator for predator in self.predators if predator.alive]
+        self.predators = [
+            predator for predator in self.predators if predator.alive]
         for agent in self.fishes + self.predators:
-            agent.update(dtime)       
+            agent.update(dtime)
         self.update_qtree()
+        # print('\rAvg: %5f, Max: %5f' %(self.average_lifetime(), self.max_lifetime()), end='\0')
 
 
     def kill_all_emigrants(self):
-        tolerance = cfg.environment()['border_tolerance']
-        emigrants = []
+        tolerance=cfg.environment()['border_tolerance']
+        emigrants=[]
         self.fish_qtree.set_mask(gen_border('top', tolerance=tolerance))
-        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
+        [emigrants.append(emigrant) for emigrant in [element[2]
+                          for element in self.fish_qtree.elements()]]
         self.fish_qtree.set_mask(gen_border('right', tolerance=tolerance))
-        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
+        [emigrants.append(emigrant) for emigrant in [element[2]
+                          for element in self.fish_qtree.elements()]]
         self.fish_qtree.set_mask(gen_border('bottom', tolerance=tolerance))
-        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
+        [emigrants.append(emigrant) for emigrant in [element[2]
+                          for element in self.fish_qtree.elements()]]
         self.fish_qtree.set_mask(gen_border('left', tolerance=tolerance))
-        [emigrants.append(emigrant) for emigrant in [element[2] for element in self.fish_qtree.elements()]]
+        [emigrants.append(emigrant) for emigrant in [element[2]
+                          for element in self.fish_qtree.elements()]]
         # self.predator_qtree.set_mask(gen_border('top', tolerance=tolerance))
         # [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
         # self.predator_qtree.set_mask(gen_border('right', tolerance=tolerance))
@@ -101,45 +109,60 @@ class Environment:
         # self.predator_qtree.set_mask(gen_border('left', tolerance=tolerance))
         # [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
         [emigrant.die() for emigrant in emigrants]
-        
+
 
     def update_qtree(self):
         """ qtree takes center x, y and then width and heigth, so region is described as (x - w, y - h, x + w, y + h)"""
-        w, h = cfg.borders()
-        self.fish_qtree = Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
+        w, h=cfg.borders()
+        self.fish_qtree=Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
         [self.fish_qtree.insert((agent.get_x(), agent.get_y(), agent))
          for agent in self.fishes]
-        # self.predator_qtree = Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
-        # [self.predator_qtree.insert((agent.get_x(), agent.get_y(), agent))
-        #  for agent in self.predators]
-
-    def find_neighbours(self, agent: Agent, searched_class = None):
+        self.predator_qtree = Quadtree(w/2, h/2, w/2, h/2, QTREE_THRESHOLD)
+        [self.predator_qtree.insert((agent.get_x(), agent.get_y(), agent))
+         for agent in self.predators] 
+       
+    def find_neighbours(self, agent: Agent, searched_class=None):
         if searched_class is None:
-            searched_class = agent.__class__
-        reaction_area = agent.reaction_area()
+            searched_class=agent.__class__
+        reaction_area=agent.reaction_area()
         if searched_class == Fish:
             self.fish_qtree.set_mask(reaction_area)
-            neighbours = self.fish_qtree.elements()
+            neighbours=self.fish_qtree.elements()
         else:
             self.predator_qtree.set_mask(reaction_area)
-            neighbours = self.predator_qtree.elements()
-        neighbours = [element[2] for element in neighbours]
+            neighbours=self.predator_qtree.elements()
+        neighbours=[element[2] for element in neighbours if element[2] is not agent]
         return neighbours
 
     def delete_dead_fishes(self):
-        number_of_fishes = len(self.fishes)
-        self.fishes = [fish for fish in self.fishes if fish.alive]
+        number_of_fishes=len(self.fishes)
+        self.fishes=[fish for fish in self.fishes if fish.alive]
         self.deaths += number_of_fishes - len(self.fishes)
 
     def debug_print(self):
-        screen = pg.display.get_surface()
+        screen=pg.display.get_surface()
         pg.gfxdraw.filled_polygon(screen, gen_border('top'), pg.Color('black'))
-        pg.gfxdraw.filled_polygon(screen, gen_border('right'), pg.Color('black'))
-        pg.gfxdraw.filled_polygon(screen, gen_border('bottom'), pg.Color('black'))
-        pg.gfxdraw.filled_polygon(screen, gen_border('left'), pg.Color('black'))
+        pg.gfxdraw.filled_polygon(
+            screen, gen_border('right'), pg.Color('black'))
+        pg.gfxdraw.filled_polygon(
+            screen, gen_border('bottom'), pg.Color('black'))
+        pg.gfxdraw.filled_polygon(
+            screen, gen_border('left'), pg.Color('black'))
 
-    def is_agent_withing_turning_area(self, agent:Agent):
-        for border in TURNING_BORDERS:
-            if border.contains(Point(agent.position)):
-                return True
-        return False
+    def is_agent_withing_turning_area(self, agent: Agent):
+        pos = Point(agent.position)
+        return any([border.contains(pos) for border in TURNING_BORDERS])
+
+    def average_lifetime(self):
+        return sum([fish.frame for fish in self.all_fishes])/len(self.all_fishes)
+
+    def max_lifetime(self):
+        return max([fish.frame for fish in self.all_fishes])
+
+    def separate_predators(self):
+        for predator in self.predators:
+            close = self.find_neighbours(predator)
+            if len(close) > 0:
+                acc = -1 *reduce(lambda a, b: a + b, [mate.position - predator.position for mate in close]) * 10
+                predator.set_acceleration(acc)
+            

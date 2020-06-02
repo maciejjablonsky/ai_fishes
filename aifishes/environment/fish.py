@@ -51,30 +51,18 @@ def fish_shape():
 
 class Fish(Agent):
     def __init__(self):
-        super().__init__(fish_sprite(), random_position(), random_velocity(cfg.fish_vel_start_magnitude()))
+        super().__init__(fish_sprite(), random_position(), random_velocity(cfg.fish_vel_start_magnitude()), cfg.fish()['reaction_radius'])
         self.hitbox = fish_shape()
-        self.reaction = None
 
+    def create_reaction_area(self):
+        vision_angle = cfg.fish()['vision_angle']
+        n = 8
+        return super().create_reaction_area(vision_angle, n)
 
     def limit_velocity(self):
         min_limit = cfg.fish()['velocity']['min']
         max_limit = cfg.fish()['velocity']['max']
         return super().limit_velocity(min_limit=min_limit, max_limit=max_limit)
-
-    def reaction_area(self):
-        if self.reaction is None:
-            radius = cfg.fish()['reaction_radius']
-            vis_angle = cfg.fish()['vision_angle']
-            start = agent.scale( - vis_angle / 2, [0, 360], [0, 2 * np.pi])
-            end = agent.scale(vis_angle / 2, [0, 360], [0, 2 * np.pi])
-            t = np.linspace(start, end, num=8, dtype=np.float32)
-            x = np.append(0, radius * np.cos(t))
-            y = np.append(0, radius * np.sin(t))
-            self.reaction = np.c_[x, y]
-        direction = self.velocity.normalize()
-        ''' this is rotation matrix with following sin and cos values of velocity angle'''
-        rotation_matrix = np.array(((direction[0],  -direction[1]), (direction[1], direction[0])))
-        return np.array([rotation_matrix.dot(point) for point in self.reaction]) + self.position
 
     def safe_space(self):
         direction_angle = agent.X_AXIS_VEC.angle_to(self.velocity)
