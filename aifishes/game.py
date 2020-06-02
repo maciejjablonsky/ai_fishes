@@ -31,6 +31,10 @@ class Game:
         self.font = pg.font.Font(None, 30)
         self.running = False
         self.dqn_machine = DQNMachine(self)
+        policy_path = cfg.dqn_vision()['policy_path']
+        target_path = cfg.dqn_vision()['target_path']
+        if len(policy_path) > 0 and len(target_path)> 0:
+            self.dqn_machine.load_state(policy_path, target_path)
 
     def setup(self):
         cfg.load_config()
@@ -42,8 +46,6 @@ class Game:
         self.environment.update_observations()
         self.environment.update_observations()
 
-        self.screen.fill(SCREEN_COLOR)
-        self.draw()
         self.time = Time()
         self.running = True
         # self.frame = 0

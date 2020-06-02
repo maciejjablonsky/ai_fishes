@@ -1,6 +1,6 @@
 {
   "game": {
-    "draw": true
+    "draw": false
   },
   "fish": {
     "amount": 100,
@@ -15,20 +15,20 @@
       "max": 1000
     },
     "reaction_radius": 100,
-    "vision_angle":300,
+    "vision_angle":330,
     "safe_distance":50,
     "vision_rays": 5
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 2,
+    "amount": 4,
     "velocity":{
       "start": 150,
       "min": 100,
       "max": 150
     },
     "reaction_radius":100,
-    "vision_angle": 300
+    "vision_angle": 330
   },
   "environment": {
     "name": "AIFishes",
@@ -55,12 +55,14 @@
     "alignment":0.9
   },
   "dqn_vision":{
-    "output_length":4,
+    "output_length":17,
     "view_size": 40,
-    "epochs":200,
-    "epoch_duration":50000,
+    "epochs":9999,
+    "epoch_duration":10000,
     "learning": true, 
-    "learning_agents":50,
-    "input_length":12
+    "learning_agents":100,
+    "input_length":12,
+    "policy_path": "",
+    "target_path": ""
   }
 }

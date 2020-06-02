@@ -76,7 +76,7 @@ class Environment:
         self.update_qtree()
         self.update_observations()
         
-        # print('\rAvg: %5f, Max: %5f' %(self.average_lifetime(), self.max_lifetime()), end='\0')
+        print('\rAvg: %5f, Max: %5f, Alive: %d' %(self.average_lifetime(), self.max_lifetime(), len(self.fishes)), end='\0')
 
     def update_observations(self):
         for fish in self.last_frame['all_fishes']:

@@ -11,6 +11,7 @@ import math
 import pygame as pg 
 from torch.tensor import Tensor
 from typing import List
+from datetime import datetime
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -88,6 +89,9 @@ class DQNMachine:
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
 
+    def load_state(self, policy_path, target_path):
+        self.policy.load_state_dict(torch.load(policy_path))
+        self.target.load_state_dict(torch.load(target_path))
 
     def next_step(self, states: List[dict]):
         predictions = []
@@ -112,7 +116,8 @@ class DQNMachine:
         if self.should_stop():
             print('\nEpoch %d | Average time: %f | Max time: %f' % (
                 self.epochs, self.environment.average_lifetime(), self.environment.max_lifetime()))
-
+            with open('time_stats.csv', 'a') as time_stats:
+                time_stats.write('%d,%f,%f' %(self.epochs, self.environment.average_lifetime(), self.environment.max_lifetime()))
             self.epoch_duration = 0
             self.save_stats()
             self.epochs += 1
@@ -129,7 +134,10 @@ class DQNMachine:
                 or len(self.environment.predators) != cfg.predator()['amount'])
 
     def save_stats(self):
-        pass
+        date = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        epoch = self.epochs
+        torch.save(self.policy.state_dict(), 'saves/policy_model_epoch_%d_%s.model' % (epoch, date))
+        torch.save(self.target.state_dict(), 'saves/target_model_epoch_%d_%s.model' % (epoch, date))
 
     def predict(self, state):
         action = self.select_action(torch.tensor([state['observation']])).item()
