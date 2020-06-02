@@ -3,7 +3,7 @@
     "draw": true
   },
   "fish": {
-    "amount": 10,
+    "amount": 100,
     "dim": [15, 7],
     "velocity":{
       "start": 150,
@@ -14,20 +14,20 @@
       "min": 0,
       "max": 1000
     },
-    "reaction_radius": 40,
+    "reaction_radius": 100,
     "vision_angle":300,
     "safe_distance":50,
     "vision_rays": 5
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 0,
+    "amount": 2,
     "velocity":{
       "start": 150,
       "min": 100,
       "max": 150
     },
-    "reaction_radius":80,
+    "reaction_radius":100,
     "vision_angle": 300
   },
   "environment": {

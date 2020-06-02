@@ -54,7 +54,10 @@ class Game:
         if actions is None:
             return
 
-        actions['dtime'] = self.time.get_dtime()
+        if self.dqn_machine.learning:
+            actions['dtime'] = 0.03
+        else:
+            actions['dtime'] = self.time.get_dtime()
         self.environment.frame(actions)
 
     def draw(self):
@@ -76,8 +79,8 @@ class Game:
     def run(self):
         while self.running:
             self.events()
-            # if self.DRAW:
-                # self.screen.fill(SCREEN_COLOR)
+            if self.DRAW:
+                self.screen.fill(SCREEN_COLOR)
             self.update()
             if self.DRAW:
                 self.draw()
