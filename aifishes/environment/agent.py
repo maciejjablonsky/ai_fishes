@@ -43,8 +43,8 @@ class Agent:
         self.acceleration = pg.Vector2(0, 0)
         self.alive = True
         self.closest_target = None
-        self.last_view = None
-        self.current_view = None
+        self.last_observation = None
+        self.current_observation = None
         self.frame = 0
         self.learning = False
         self.reward = 0
@@ -86,15 +86,6 @@ class Agent:
         if magnitude < min_limit:
             self.velocity = min_limit * self.velocity.normalize()
 
-    def init_view(self):
-        self.last_view = self.current_view = extract_boid_view(
-            self.reaction_area(), self.position)
-
-    def update_view(self):
-        self.last_view = self.current_view
-        self.current_view = extract_boid_view(
-            self.reaction_area(), self.position)
-
     def update_velocity(self, dtime):
         self.velocity += self.acceleration * dtime
 
@@ -121,16 +112,18 @@ class Agent:
         self.frame += 1
         self.reward = 1
 
+    def update_observation(self, observation):
+        self.last_observation = self.current_observation
+        self.current_observation = observation
+
     def detect_target(self, surroundings):
         self.closest_target = self.choose_closest(surroundings)
 
     def choose_closest(self, surroundings):
         if len(surroundings) == 0:
             return None
-
-        def distance(agent):
-            return math.sqrt((self.position.x - agent.position.x) ** 2 + (self.position.y - agent.position.y)**2)
-        surroundings.sort(key=distance)
+        surroundings.sort(key=lambda agent: math.sqrt(
+            (self.position.x - agent.position.x) ** 2 + (self.position.y - agent.position.y)**2))
         return surroundings[0]
 
     def update_showable(self):

@@ -8,6 +8,7 @@ import numpy as np
 from shapely.geometry import Polygon, Point
 from typing import List
 from functools import reduce
+from torch.tensor import Tensor
 
 QTREE_THRESHOLD = 4
 
@@ -30,7 +31,7 @@ def gen_border(*args, **kwargs):
 BORDERS_NAMES = ['top', 'right', 'bottom', 'left']
 TURNING_BORDERS: List[Polygon] = [Polygon(gen_border(border, tolerance=cfg.environment()[
                                           'turning_tolerance'])) for border in BORDERS_NAMES]
-
+SCREEN_WIDTH, SCREEN_HEIGHT = cfg.environment()['dim']
 
 class Environment:
     def __init__(self):
@@ -40,7 +41,7 @@ class Environment:
         self.all_predators = self.predators
         self.fish_qtree = None
         self.predator_qtree = None
-        self.last_states = {
+        self.last_frame = {
             'all_fishes': self.fishes,
             'all_predators': self.predators
         }
@@ -48,19 +49,14 @@ class Environment:
         self.deaths = 0
 
     def get_state(self):
-        return {
-            'fishes': self.fishes,
-            'predators': self.predators,
-            'fishes_tree': self.fish_qtree,
-            'predators_tree': self.predator_qtree,
-            'all_fishes': self.last_states['all_fishes'],
-            'all_predators': self.last_states['all_predators']
-        }
+        return [{'current':f.current_observation, 'last':f.last_observation} for f in self.last_frame['all_fishes']]
 
-    def frame(self, data: dict):
-        dtime = data['dtime']
-        # for fish, acc in zip(self.fishes, data['fish_acc']):
-        #     fish.set_acceleration(acc)
+    
+
+    def frame(self, actions: dict):
+        dtime = actions['dtime']
+        for fish, acc in zip(self.fishes, actions['fishes_acc']):
+            fish.set_acceleration(acc)
         for predator in self.predators:
             predator.set_acceleration(pg.Vector2(0,0))
             if self.is_agent_withing_turning_area(predator):
@@ -69,16 +65,22 @@ class Environment:
                 predator.action(self.find_neighbours(predator, Fish))
         self.separate_predators()
         self.kill_all_emigrants()
-        self.last_states['all_fishes'] = self.fishes
-        self.last_states['all_predators'] = self.predators
+        self.last_frame['all_fishes'] = self.fishes
+        self.last_frame['all_predators'] = self.predators
         self.delete_dead_fishes()
         self.predators = [
             predator for predator in self.predators if predator.alive]
         for agent in self.fishes + self.predators:
             agent.update(dtime)
+
         self.update_qtree()
+        self.update_observations()
+        
         # print('\rAvg: %5f, Max: %5f' %(self.average_lifetime(), self.max_lifetime()), end='\0')
 
+    def update_observations(self):
+        for fish in self.last_frame['all_fishes']:
+            fish.update_observation(self.create_observations(fish))
 
     def kill_all_emigrants(self):
         tolerance=cfg.environment()['border_tolerance']
@@ -105,7 +107,39 @@ class Environment:
         # [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
         [emigrant.die() for emigrant in emigrants]
 
+    def create_observations(self, fish:Fish):
+        if not fish.alive:
+            return None
 
+        obs = [fish.velocity.x, fish.velocity.y, fish.acceleration.x, fish.acceleration.y]
+
+        '''top, right, bottom, left'''
+        wall_distances = [fish.position.y, SCREEN_WIDTH - fish.position.x, SCREEN_HEIGHT - fish.position.y, fish.position.x]
+        obs.extend(wall_distances)
+        mates = self.find_neighbours(fish)
+        enemies = self.find_neighbours(fish, Predator)
+        mate_vec = pg.Vector2(0,0)
+        enemy_vec = pg.Vector2(0,0)
+        
+        if len(mates) > 0:
+            mate_vec = reduce(lambda a,b: a+ b, [mate.position - fish.position for mate in mates])/len(mates)
+        if len(enemies) > 0:
+            enemy_vec = reduce(lambda a,b: a + b, [enemy.position - fish.position for enemy in enemies])/len(enemies)
+
+        obs.append(mate_vec.x)
+        obs.append(mate_vec.y)
+        obs.append(enemy_vec.x)
+        obs.append(enemy_vec.y)
+        # print(len(obs), obs)
+        return {
+            'observation': obs,
+            'reward': fish.reward,
+            'acceleration': fish.acceleration,
+            'alive': fish.alive,
+            'learning': fish.learning,
+            'acc_magnitude':fish.max_acc_magnitude
+        }
+        
     def update_qtree(self):
         """ qtree takes center x, y and then width and heigth, so region is described as (x - w, y - h, x + w, y + h)"""
         w, h=cfg.borders()

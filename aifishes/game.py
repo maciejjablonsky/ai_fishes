@@ -39,37 +39,23 @@ class Game:
         
         for agent,_ in zip(self.environment.fishes, range(cfg.dqn_vision()['learning_agents'])):
             agent.learning = True
+        self.environment.update_observations()
+        self.environment.update_observations()
+
         self.screen.fill(SCREEN_COLOR)
         self.draw()
-        [agent.init_view()
-         for agent in self.environment.fishes + self.environment.predators]
-        [agent.init_view()
-         for agent in self.environment.fishes + self.environment.predators]
         self.time = Time()
-        
-        
         self.running = True
         # self.frame = 0
 
     def update(self):
         state = self.environment.get_state()
-        state['dtime'] = self.time.get_dtime()
         actions = self.dqn_machine.next_step(state)
         if actions is None:
             return
 
-        # fish_acc = [q if boid.closest_target is not None else f + q for boid, q, f in zip(
-        #     state['fishes'], self.qlearning.next_step(Fish), flocking_behavior(state))]
-        # qlearning_acc = self.qlearning.next_step(Fish)
-        # fish_acc = [] #flocking_behavior(state)
-        predator_acc = []  # self.qlearning.next_step(Predator)
-
-        data = {
-            'dtime': self.time.get_dtime(),
-            'fish_acc': actions['fishes_acc'],
-            'predator_acc': predator_acc,
-        }
-        self.environment.frame(data)
+        actions['dtime'] = self.time.get_dtime()
+        self.environment.frame(actions)
 
     def draw(self):
         for agent in self.environment.fishes + self.environment.predators:
@@ -78,13 +64,9 @@ class Game:
                              pg.Vector2(sprite.get_size()) / 2)
             if DEBUG:
                 agent.debug_print(self.screen)
-        self.update_boids_vision()
         if SHOW_FPS:
             self.blit_fps(self.time.get_fps())
         pg.display.flip()
-
-    def update_boids_vision(self):
-        [boid.update_view() for boid in self.environment.fishes]
 
     def blit_fps(self, fps):
         fps_view = self.font.render(
@@ -94,8 +76,8 @@ class Game:
     def run(self):
         while self.running:
             self.events()
-            if self.DRAW:
-                self.screen.fill(SCREEN_COLOR)
+            # if self.DRAW:
+                # self.screen.fill(SCREEN_COLOR)
             self.update()
             if self.DRAW:
                 self.draw()

@@ -3,16 +3,16 @@
     "draw": true
   },
   "fish": {
-    "amount": 100,
+    "amount": 10,
     "dim": [15, 7],
     "velocity":{
       "start": 150,
       "min": 100,
-      "max": 200
+      "max": 150
     },
     "acceleration":{
       "min": 0,
-      "max": 20
+      "max": 1000
     },
     "reaction_radius": 40,
     "vision_angle":300,
@@ -21,7 +21,7 @@
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 5,
+    "amount": 0,
     "velocity":{
       "start": 150,
       "min": 100,
@@ -55,11 +55,12 @@
     "alignment":0.9
   },
   "dqn_vision":{
-    "directions":12,
+    "output_length":4,
     "view_size": 40,
     "epochs":200,
     "epoch_duration":50000,
     "learning": true, 
-    "learning_agents":1
+    "learning_agents":50,
+    "input_length":12
   }
 }

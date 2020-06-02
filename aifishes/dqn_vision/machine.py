@@ -9,6 +9,8 @@ import aifishes.config as cfg
 import random
 import math
 import pygame as pg 
+from torch.tensor import Tensor
+from typing import List
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -19,10 +21,10 @@ class DQNMachine:
         self.game = game
         self.environment = None
         # left, right, upper, down
-        self.n_actions = cfg.dqn_vision()['directions']
-        self.target = DQN(r, r, self.n_actions)
-        self.policy = DQN(r, r, self.n_actions)
-        self.BATCH_SIZE = 128
+        self.n_actions = cfg.dqn_vision()['output_length']
+        self.target = DQN(cfg.dqn_vision()['input_length'], self.n_actions)
+        self.policy = DQN(cfg.dqn_vision()['input_length'], self.n_actions)
+        self.BATCH_SIZE = 32
         self.GAMMA = 0.999
         self.EPS_START = 0.9
         self.EPS_END = 0.05
@@ -56,13 +58,7 @@ class DQNMachine:
         if len(self.memory) < self.BATCH_SIZE:
             return
         transitions = self.memory.sample(self.BATCH_SIZE)
-        # Transpose the batch (see https://stackoverflow.com/a/19343/3343043 for
-        # detailed explanation). This converts batch-array of Transitions
-        # to Transition of batch-arrays.
         batch = Transition(*zip(*transitions))
-
-        # Compute a mask of non-final states and concatenate the batch elements
-        # (a final state would've been the one after which simulation ended)
         non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
                                                 batch.next_state)), device=DEVICE, dtype=torch.bool)
         non_final_next_states = torch.cat([s for s in batch.next_state
@@ -71,40 +67,39 @@ class DQNMachine:
         action_batch = torch.cat(batch.action)
         reward_batch = torch.cat(batch.reward)
 
-        # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
-        # columns of actions taken. These are the actions which would've been taken
-        # for each batch state according to policy_net
+        
         state_action_values = self.policy(state_batch).gather(1, action_batch)
 
-        # Compute V(s_{t+1}) for all next states.
-        # Expected values of actions for non_final_next_states are computed based
-        # on the "older" target_net; selecting their best reward with max(1)[0].
-        # This is merged based on the mask, such that we'll have either the expected
-        # state value or 0 in case the state was final.
         next_state_values = torch.zeros(self.BATCH_SIZE, device=DEVICE)
         next_state_values[non_final_mask] = self.target(
             non_final_next_states).max(1)[0].detach()
-        # Compute the expected Q values
+
         expected_state_action_values = (
-            next_state_values * GAMMA) + reward_batch
+            next_state_values * self.GAMMA) + reward_batch
 
         # Compute Huber loss
         loss = F.smooth_l1_loss(state_action_values,
                                 expected_state_action_values.unsqueeze(1))
 
         # Optimize the model
-        optimizer.zero_grad()
+        self.optimizer.zero_grad()
         loss.backward()
         for param in self.policy.parameters():
             param.grad.data.clamp_(-1, 1)
-        optimizer.step()
+        self.optimizer.step()
 
-    def next_step(self, state: dict):
+
+    def next_step(self, states: List[dict]):
         predictions = []
-        for agent in state['all_fishes']:
-            if self.learning and agent.learning:
-                self.train(agent)
-            predictions.append(self.predict(agent))
+        for state in states:
+            current, last = state.values()
+            if current is None:
+                continue
+            if current['learning'] and self.learning:
+                self.train(current, last)
+            prediction = self.predict(current)
+            # print(prediction)
+            predictions.append(prediction)
         if self.manage_epochs():
             return {
                 'fishes_acc': predictions
@@ -129,30 +124,39 @@ class DQNMachine:
         return True
 
     def should_stop(self):
-        return self.learning and (len(self.environment.fishes) == 0 or self.epoch_duration >= self.epoch_duration_limit or len(self.environment.predators) != cfg.predator()['amount'])
+        return self.learning and (len(self.environment.fishes) == 0 \
+            or self.epoch_duration >= self.epoch_duration_limit \
+                or len(self.environment.predators) != cfg.predator()['amount'])
 
     def save_stats(self):
         pass
 
-    def predict(self, agent: Agent):
-        state = agent.current_view - agent.last_view
-        action = self.select_action(state).item()
+    def predict(self, state):
+        action = self.select_action(torch.tensor([state['observation']])).item()
         angle = self.action_to_angle(action)
         acc = pg.Vector2()
-        acc.from_polar((agent.max_acc_magnitude, angle))
+        acc.from_polar((state['acc_magnitude'], angle))
         return acc
-        # self.select_action(state)
-        # return pg.Vector2(0,0)
 
-    def train(self, agent: Agent):
-        state = agent.current_view - agent.last_view
-        action = self.discretize_acc_angle_to_action(agent)
-        # self.memory.push(state, )
+    def train(self, current, last):
+        reward = current['reward']
+        action = self.specify_action(current['acceleration'])
+        self.memory.push(torch.tensor([last['observation']]), 
+            torch.tensor([[action]]), 
+            torch.tensor([current['observation']]), 
+            torch.tensor([[reward]]))
+        self.optimize_model()
 
-    def discretize_acc_angle_to_action(self, agent: Agent):
-        angle = agent.velocity.angle_to(X_AXIS_VEC)
-        action = int(round(scale(angle, [-180, 180], [0, self.n_actions - 1])))
-        return 
+    def discretize_acc_angle_to_action(self, acceleration:pg.Vector2):
+        angle = acceleration.angle_to(X_AXIS_VEC)
+        action = int(scale(angle, [-180, 180], [0, self.n_actions - 2]))
+        return action
 
     def action_to_angle(self, action):
-        return round(scale(action, [0, self.n_actions - 1], [-180, 180]))
+        return round(scale(action, [0, self.n_actions - 2], [-180, 180]))
+
+    def specify_action(self, acceleration:pg.Vector2):
+        action = self.n_actions - 1 # last action is no acceleration
+        if acceleration.length() > 1e-4:
+            action = self.discretize_acc_angle_to_action(acceleration)
+        return action
