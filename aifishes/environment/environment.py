@@ -59,13 +59,8 @@ class Environment:
 
     def frame(self, data: dict):
         dtime = data['dtime']
-        for fish in self.fishes:
-            if self.is_agent_withing_turning_area(fish):
-                fish.steer_to_center()
-            # else:
-            #     pass
-                # fish.apply_force(acc)
-            # fish.detect_target(self.find_neighbours(fish, Predator))
+        # for fish, acc in zip(self.fishes, data['fish_acc']):
+        #     fish.set_acceleration(acc)
         for predator in self.predators:
             predator.set_acceleration(pg.Vector2(0,0))
             if self.is_agent_withing_turning_area(predator):
@@ -163,6 +158,6 @@ class Environment:
         for predator in self.predators:
             close = self.find_neighbours(predator)
             if len(close) > 0:
-                acc = -1 *reduce(lambda a, b: a + b, [mate.position - predator.position for mate in close]) * 10
+                acc = -1 *reduce(lambda a, b: a + b, [(mate.position - predator.position)* 5 for mate in close]) * 10
                 predator.set_acceleration(acc)
             

@@ -4,7 +4,7 @@ Separation: steer to avoid local crowding
 Cohesion: steer to average position of local flockmates
 Alignment: steer towards average heading of local flockmates
 '''
-from aifishes.fish import Fish
+from aifishes.environment.fish import Fish
 from typing import List
 from smartquadtree import Quadtree
 from pygame import Vector2

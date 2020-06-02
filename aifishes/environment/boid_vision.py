@@ -62,7 +62,9 @@ def boid_vision_poly(vision_area:np.ndarray, position:np.ndarray) -> torch.Tenso
 
 def downsample_image(view:np.ndarray):
     '''Scales boid view image dimensions to neural network input and scales color values to <0,1)'''
-    view = rgb_to_normalized_gray(view)
+    # view = rgb_to_normalized_gray(view)
+    # view = view.transpose((2,0,1))
+    view = np.ascontiguousarray(view, dtype=np.float32)/255
     view = torch.from_numpy(view)
     return view.unsqueeze(0).to(DEVICE)
     

@@ -1,8 +1,8 @@
 import pygame as pg
 import numpy as np
 import aifishes.config as cfg
-from aifishes.agent import X_AXIS_VEC
-from aifishes.fish import Fish
+from aifishes.environment.agent import X_AXIS_VEC
+from aifishes.environment.fish import Fish
 
 QDEBUG = False
 

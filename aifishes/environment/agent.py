@@ -54,6 +54,7 @@ class Agent:
         self._reaction_area = None
         self.create_reaction_area()
         self.update_reaction_area()
+        self.max_acc_magnitude = 0
 
     def create_reaction_area(self, vision_angle=360, n=10):
         vision_angle = cfg.fish()['vision_angle']
@@ -164,4 +165,4 @@ class Agent:
 
     def steer_to_center(self):
         to_center = pg.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2) - self.position
-        self.velocity = self.velocity.lerp(to_center, 0.05)
+        self.velocity = self.velocity.lerp(to_center, 0.03)

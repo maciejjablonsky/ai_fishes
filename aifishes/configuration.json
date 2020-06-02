@@ -6,35 +6,35 @@
     "amount": 100,
     "dim": [15, 7],
     "velocity":{
-      "start": 100,
+      "start": 150,
       "min": 100,
-      "max": 150
+      "max": 200
     },
     "acceleration":{
       "min": 0,
       "max": 20
     },
-    "reaction_radius": 30,
+    "reaction_radius": 40,
     "vision_angle":300,
     "safe_distance":50,
     "vision_rays": 5
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 2,
+    "amount": 5,
     "velocity":{
-      "start": 100,
+      "start": 150,
       "min": 100,
       "max": 150
     },
-    "reaction_radius":100,
+    "reaction_radius":80,
     "vision_angle": 300
   },
   "environment": {
     "name": "AIFishes",
     "dim": [640, 640],
-    "border_tolerance": 5,
-    "turning_tolerance": 20
+    "border_tolerance": 10,
+    "turning_tolerance": 30
   },
   "qlearning": {
     "resolution": [20, 20],
@@ -56,6 +56,10 @@
   },
   "dqn_vision":{
     "directions":12,
-    "view_size": 40
+    "view_size": 40,
+    "epochs":200,
+    "epoch_duration":50000,
+    "learning": true, 
+    "learning_agents":1
   }
 }

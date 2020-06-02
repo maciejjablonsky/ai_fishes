@@ -53,6 +53,7 @@ class Fish(Agent):
     def __init__(self):
         super().__init__(fish_sprite(), random_position(), random_velocity(cfg.fish_vel_start_magnitude()), cfg.fish()['reaction_radius'])
         self.hitbox = fish_shape()
+        self.max_acc_magnitude = cfg.fish()['acceleration']['max']
 
     def create_reaction_area(self):
         vision_angle = cfg.fish()['vision_angle']
