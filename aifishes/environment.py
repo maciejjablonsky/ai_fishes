@@ -25,7 +25,9 @@ def gen_border(*kwargs):
 class Environment:
     def __init__(self):
         self.fishes = [Fish() for _ in range(cfg.fish_amount())]
+        self.all_fishes = self.fishes
         self.predators = [Predator() for _ in range(cfg.predator_amount())]
+        self.all_predators = self.predators
         self.fish_qtree = None
         self.predator_qtree = None
         self.last_states = {}
@@ -56,6 +58,7 @@ class Environment:
         for agent in self.fishes + self.predators:
             agent.update(dtime)       
         self.update_qtree()
+        print('\rAvg: %5f, Max: %5f, Alive: %d' %(self.average_lifetime(), self.max_lifetime(), len(self.fishes)), end='\0')
 
 
     def kill_all_emigrants(self):
@@ -79,6 +82,11 @@ class Environment:
         [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
         [emigrant.die() for emigrant in emigrants]
         
+    def average_lifetime(self):
+        return sum([fish.frame for fish in self.all_fishes])/len(self.all_fishes)
+
+    def max_lifetime(self):
+        return max([fish.frame for fish in self.all_fishes])
 
     def update_qtree(self):
         """ qtree takes center x, y and then width and heigth, so region is described as (x - w, y - h, x + w, y + h)"""

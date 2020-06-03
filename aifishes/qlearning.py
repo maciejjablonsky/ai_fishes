@@ -63,7 +63,7 @@ class QLearning():
             survival_percentage = ((cfg.fish()['amount'] - self.environment.deaths) / cfg.fish()['amount']) * 100
         self.game.setup()
         self.save_qtable()
-        print("Epoch: %d, Survival percentage: %d%%" % (self.epoch, survival_percentage))
+        print("\nEpoch: %d, Survival percentage: %d%%" % (self.epoch, survival_percentage))
 
     def read_from_qtable(self, agent_class_index):
         self.debug_print()

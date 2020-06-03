@@ -11,12 +11,12 @@
       "max": 200
     },
     "reaction_radius": 100,
-    "vision_angle":360,
+    "vision_angle":330,
     "safe_distance":50
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 2,
+    "amount": 4,
     "velocity":{
       "start": 100,
       "min": 100,
@@ -39,7 +39,7 @@
     "learning": true,
     "new_qtable": false,
     "max_epochs": 50,
-    "max_ticks": 1000,
+    "max_ticks": 1500,
     "print_grid": true,
     "print_vectors": true
   },

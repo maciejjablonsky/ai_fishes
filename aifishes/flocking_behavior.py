@@ -33,13 +33,13 @@ def flocking_behavior(environment_data: dict) -> List[Fish]:
     def separation(boid: Fish, flockmates: List[Fish]) -> Vector2:
         '''Computes acceleration to avoid local crowding with flockmates'''
         '''Formula is negative sum of differences between flockmates and boid'''
-        return  -1 *reduce(lambda a, b: a + b, [mate.position - boid.position for mate in flockmates])  / dtime
+        return  -1 *reduce(lambda a, b: a + b, [mate.position - boid.position for mate in flockmates])  * dtime
 
     def cohesion(boid: Fish, flockmates: List[Fish]) -> Vector2:
         '''Computes acceleration to keep boid close to other boids'''
         '''Formula is difference between average position of flockmates and boid position'''
         mates_positions = [mate.position for mate in flockmates]
-        return (reduce(lambda a, b: a + b, mates_positions)/len(flockmates) - boid.position) / (dtime)
+        return (reduce(lambda a, b: a + b, mates_positions)/len(flockmates) - boid.position) * (dtime)
 
     def alignment(boid: Fish, flockmates: List[Fish]) -> Vector2:
         '''Computes acceleration to keep boid velocity in alignment with local flockmates'''
