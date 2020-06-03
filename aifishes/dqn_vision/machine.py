@@ -25,7 +25,7 @@ class DQNMachine:
         self.n_actions = cfg.dqn_vision()['output_length']
         self.target = DQN(cfg.dqn_vision()['input_length'], self.n_actions)
         self.policy = DQN(cfg.dqn_vision()['input_length'], self.n_actions)
-        self.BATCH_SIZE = 32
+        self.BATCH_SIZE = 64
         self.GAMMA = 0.999
         self.EPS_START = 0.9
         self.EPS_END = 0.05
@@ -34,7 +34,7 @@ class DQNMachine:
         self.target.load_state_dict(self.policy.state_dict())
         self.target.eval()
         self.optimizer = optim.RMSprop(self.policy.parameters())
-        self.memory = ReplayMemory(10000)
+        self.memory = ReplayMemory(1000000)
         self.steps_done = 0
         self.epochs = 0
         self.epochs_limit = cfg.dqn_vision()['epochs']
@@ -83,6 +83,7 @@ class DQNMachine:
                                 expected_state_action_values.unsqueeze(1))
 
         # Optimize the model
+        # print(loss, end='\0')
         self.optimizer.zero_grad()
         loss.backward()
         for param in self.policy.parameters():
@@ -114,10 +115,12 @@ class DQNMachine:
         '''Returns true if game continues, False when reset or end happend'''
         self.epoch_duration += 1
         if self.should_stop():
+            if self.epochs % self.TARGET_UPDATE == 0:
+                self.target.load_state_dict(self.policy.state_dict())
             print('\nEpoch %d | Average time: %f | Max time: %f' % (
                 self.epochs, self.environment.average_lifetime(), self.environment.max_lifetime()))
             with open('time_stats.csv', 'a') as time_stats:
-                time_stats.write('%d,%f,%f' %(self.epochs, self.environment.average_lifetime(), self.environment.max_lifetime()))
+                time_stats.write('%d,%f,%f\n' %(self.epochs, self.environment.average_lifetime(), self.environment.max_lifetime()))
             self.epoch_duration = 0
             self.save_stats()
             self.epochs += 1
@@ -141,27 +144,30 @@ class DQNMachine:
 
     def predict(self, state):
         action = self.select_action(torch.tensor([state['observation']])).item()
-        angle = self.action_to_angle(action)
-        acc = pg.Vector2()
-        acc.from_polar((state['acc_magnitude'], angle))
+        if action == self.n_actions - 1:
+            acc = pg.Vector2(0,0)
+        else:
+            angle = self.action_to_angle(action)
+            acc = pg.Vector2()
+            acc.from_polar((state['acc_magnitude'], angle))
         return acc
 
     def train(self, current, last):
         reward = current['reward']
         action = self.specify_action(current['acceleration'])
-        self.memory.push(torch.tensor([last['observation']]), 
-            torch.tensor([[action]]), 
-            torch.tensor([current['observation']]), 
-            torch.tensor([[reward]]))
+        self.memory.push(torch.tensor([last['observation']], device=DEVICE), 
+            torch.tensor([[action]], device=DEVICE), 
+            torch.tensor([current['observation']], device=DEVICE), 
+            torch.tensor([[reward]], device=DEVICE))
         self.optimize_model()
 
     def discretize_acc_angle_to_action(self, acceleration:pg.Vector2):
         angle = acceleration.angle_to(X_AXIS_VEC)
-        action = int(scale(angle, [-180, 180], [0, self.n_actions - 2]))
+        action = int(round(scale(angle, [-180, 180], [0, self.n_actions - 2])))
         return action
 
     def action_to_angle(self, action):
-        return round(scale(action, [0, self.n_actions - 2], [-180, 180]))
+        return scale(action, [0, self.n_actions - 2], [-180, 180])
 
     def specify_action(self, acceleration:pg.Vector2):
         action = self.n_actions - 1 # last action is no acceleration

@@ -110,7 +110,7 @@ class Agent:
         self.update_showable()
         self.update_reaction_area()
         self.frame += 1
-        self.reward = 1
+        self.reward = 10 
 
     def update_observation(self, observation):
         self.last_observation = self.current_observation
