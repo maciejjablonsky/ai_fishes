@@ -3,7 +3,7 @@
     "draw": true
   },
   "fish": {
-    "amount": 1,
+    "amount": 200,
     "dim": [20, 10],
     "velocity":{
       "start": 100,
@@ -16,7 +16,7 @@
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 100,
+    "amount": 0,
     "velocity":{
       "start": 100,
       "min": 100,
@@ -47,6 +47,6 @@
     "flocking_on": true,
     "cohesion":1,
     "separation":1,
-    "alignment":1
+    "alignment":1.5
   }
 }

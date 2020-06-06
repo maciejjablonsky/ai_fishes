@@ -40,13 +40,17 @@ class Game:
 
     def update(self):
         state = self.environment.get_state()
-        state['dtime'] = self.time.get_dtime()
+        if self.qlearning.LEARNING:
+            dtime = 0.03
+        else:
+            dtime = self.time.get_dtime()
+        state['dtime'] = dtime
         fish_acc = self.apply_behavior(state)
         # qlearning_acc = self.qlearning.next_step(Fish)
         # fish_acc = flocking_behavior(state)
         predator_acc = self.qlearning.next_step(Predator)
         data = {
-            'dtime': self.time.get_dtime(),
+            'dtime': dtime,
             'fish_acc': fish_acc,
             'predator_acc': predator_acc,
         }
