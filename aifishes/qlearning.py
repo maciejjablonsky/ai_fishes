@@ -32,7 +32,8 @@ class QLearning():
         if self.arrows:
             self.ARROW_FISH_SPRITE, self.ARROW_PREDATOR_SPRITE = self.arrow_sprite()
         self.stat_filename = None
-        self.setup_stat_file()
+        if self.LEARNING:
+            self.setup_stat_file()
 
     def next_step(self, agent_class):
         agent_class_index = self.get_class(agent_class)

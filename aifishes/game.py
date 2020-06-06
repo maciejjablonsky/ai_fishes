@@ -46,14 +46,18 @@ class Game:
         else:
             dtime = self.time.get_dtime()
         state['dtime'] = dtime
-        fish_acc = self.apply_behavior(state)
-        predator_acc = self.qlearning.next_step(Predator)
         data = {
             'dtime': dtime,
-            'fish_acc': fish_acc,
-            'predator_acc': predator_acc,
+            'fish_acc': self.apply_behavior(state),
+            'predator_acc': self.predators_behavior(state),
         }
         self.environment.frame(data)
+
+    def predators_behavior(self, state):
+        if cfg.qlearing()['predators_learning']:
+            return self.qlearning.next_step(Predator)
+        else:
+            return []
 
     def apply_behavior(self, state):
         if self.flocking_on:

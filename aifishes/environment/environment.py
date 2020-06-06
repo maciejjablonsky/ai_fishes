@@ -63,12 +63,7 @@ class Environment:
         for fish, acc in zip(self.fishes, actions['fish_acc']):
             fish.set_acceleration(acc)
             fish.detect_target(self.find_neighbours(fish,Predator))
-        for predator in self.predators:
-            predator.set_acceleration(pg.Vector2(0,0))
-            if self.is_agent_withing_turning_area(predator):
-                predator.steer_to_center()
-            else:
-                predator.action(self.find_neighbours(predator, Fish))
+        self.predators_action(actions)
         self.separate_predators()
         self.kill_all_emigrants()
         self.last_states['all_fishes'] = self.fishes
@@ -81,6 +76,20 @@ class Environment:
 
         self.update_qtree()
         print('\rAvg: %5f, Max: %5f, Alive: %d' %(self.average_lifetime(), self.max_lifetime(), len(self.fishes)), end='\0')
+
+    def predators_action(self, actions):
+        if cfg.qlearing()['predators_learning']:
+            for predator, acc in zip(self.predators, actions['predator_acc']):
+                predator.set_acceleration(acc)
+                predator.detect_target(self.find_neighbours(predator, Fish))
+        else:
+            for predator in self.predators:
+                predator.set_acceleration(pg.Vector2(0,0))
+                if self.is_agent_withing_turning_area(predator):
+                    predator.steer_to_center()
+                else:
+                    predator.action(self.find_neighbours(predator, Fish))
+            
 
     def kill_all_emigrants(self):
         tolerance=cfg.environment()['border_tolerance']
