@@ -10,13 +10,13 @@
       "min": 100,
       "max": 220
     },
-    "reaction_radius": 100,
-    "vision_angle":330,
+    "reaction_radius": 130,
+    "vision_angle":360,
     "safe_distance":50
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 2,
+    "amount": 4,
     "velocity":{
       "start": 150,
       "min": 100,
@@ -32,13 +32,13 @@
     "turning_tolerance": 30
   },
   "qlearning": {
-    "resolution": [20, 20],
+    "resolution": [25, 25],
     "alpha": 0.82,
     "gamma": 0.97,
     "epsilon": 1,
-    "number_of_directions": 8,
-    "learning": false,
-    "new_qtable": false,
+    "number_of_directions": 12,
+    "learning": true,
+    "new_qtable": true,
     "max_epochs": 50,
     "max_ticks": 50000,
     "print_grid": true,
