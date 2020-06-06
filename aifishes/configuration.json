@@ -1,10 +1,10 @@
 {
   "game": {
-    "draw": true
+    "draw": false
   },
   "fish": {
-    "amount": 200,
-    "dim": [20, 10],
+    "amount": 100,
+    "dim": [15, 7],
     "velocity":{
       "start": 150,
       "min": 100,
@@ -40,7 +40,7 @@
     "learning": true,
     "new_qtable": true,
     "max_epochs": 50,
-    "max_ticks": 5000,
+    "max_ticks": 50000,
     "print_grid": true,
     "print_vectors": true
   },
