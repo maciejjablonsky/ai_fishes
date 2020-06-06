@@ -3,7 +3,7 @@
     "draw": true
   },
   "fish": {
-    "amount": 50,
+    "amount": 1,
     "dim": [20, 10],
     "velocity":{
       "start": 100,
@@ -16,7 +16,7 @@
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 4,
+    "amount": 100,
     "velocity":{
       "start": 100,
       "min": 100,
@@ -36,17 +36,17 @@
     "gamma": 0.97,
     "epsilon": 1,
     "number_of_directions": 8,
-    "learning": false,
-    "new_qtable": false,
+    "learning": true,
+    "new_qtable": true,
     "max_epochs": 50,
-    "max_ticks": 2000,
+    "max_ticks": 1500,
     "print_grid": true,
     "print_vectors": true
   },
   "flocking": {
     "flocking_on": true,
-    "cohesion":0.9,
-    "separation":0.9,
-    "alignment":0.9
+    "cohesion":1,
+    "separation":1,
+    "alignment":1
   }
 }
