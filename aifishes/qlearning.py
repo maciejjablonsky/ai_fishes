@@ -1,8 +1,9 @@
 import pygame as pg
 import numpy as np
 import aifishes.config as cfg
-from aifishes.agent import X_AXIS_VEC
-from aifishes.fish import Fish
+from aifishes.environment.agent import X_AXIS_VEC
+from aifishes.environment.fish import Fish
+from datetime import datetime
 
 QDEBUG = False
 
@@ -19,10 +20,10 @@ class QLearning():
         self.NEW_QTABLE = cfg.qlearing()['new_qtable']
         self.number_of_directions = cfg.qlearing()['number_of_directions']
         self.qtable = self.load_qtable()
-        self.tick = 0
+        self.frames = 0
         self.epoch = 0
         self.max_epochs = cfg.qlearing()['max_epochs']
-        self.max_ticks = cfg.qlearing()['max_ticks']
+        self.max_frames = cfg.qlearing()['max_ticks']
         # Debug
         self.grid = cfg.qlearing()['print_grid']
         self.arrows = cfg.qlearing()['print_vectors']
@@ -30,6 +31,9 @@ class QLearning():
         self.AGENT_INDEX_DEBUG = 0
         if self.arrows:
             self.ARROW_FISH_SPRITE, self.ARROW_PREDATOR_SPRITE = self.arrow_sprite()
+        self.stat_filename = None
+        if self.LEARNING:
+            self.setup_stat_file()
 
     def next_step(self, agent_class):
         agent_class_index = self.get_class(agent_class)
@@ -47,8 +51,8 @@ class QLearning():
             acceleration = self.get_acceleration(agent, agent_class_index)
             self.update_qtable(agent)
             acceleration_table.append(acceleration)
-        self.tick += 1
-        if self.tick == self.max_ticks:
+        self.frames += 1
+        if self.should_stop():
             self.next_epoch()
             return [pg.Vector2(0, 0)]
         if self.epoch == self.max_epochs:
@@ -56,14 +60,22 @@ class QLearning():
         return acceleration_table
 
     def next_epoch(self):
-        self.tick = 0
+        self.frames = 0
         self.epoch += 1
-        survival_percentage = 0
-        if cfg.fish()['amount'] > 0:
-            survival_percentage = ((cfg.fish()['amount'] - self.environment.deaths) / cfg.fish()['amount']) * 100
+        self.save_stats()
         self.game.setup()
         self.save_qtable()
-        print("\nEpoch: %d, Survival percentage: %d%%" % (self.epoch, survival_percentage))
+
+    def save_stats(self):
+        survival_percentage = 0
+        max_lifetime, avg_lifetime =0,0
+        if cfg.fish()['amount'] > 0:
+            survival_percentage = ((cfg.fish()['amount'] - self.environment.deaths) / cfg.fish()['amount']) * 100
+            max_lifetime = self.environment.max_lifetime()
+            avg_lifetime = self.environment.average_lifetime()
+        with open(self.stat_filename, 'a') as stats:
+            stats.write(f'{self.epoch},{avg_lifetime},{max_lifetime}\n')
+        print(f"\nepoch: {self.epoch} | avg: {avg_lifetime} | max: {max_lifetime} | survival [%]: {survival_percentage}")
 
     def read_from_qtable(self, agent_class_index):
         self.debug_print()
@@ -80,7 +92,11 @@ class QLearning():
         predicted_x, predicted_y = self.predict_next_state(x, y, agent.velocity)
         predicted_awards_array = self.qtable[predicted_x, predicted_y, 0, agent_class, :]
         predicted_award = (max(predicted_awards_array) + min(predicted_awards_array)) / 2
-        self.qtable[x, y, danger_angle, agent_class, action] += self.alpha * (reward + self.gamma * predicted_award - self.qtable[x, y, danger_angle, agent_class, action])
+        try:
+            self.qtable[x, y, danger_angle, agent_class, action] += self.alpha * (reward + self.gamma * predicted_award - self.qtable[x, y, danger_angle, agent_class, action])
+        except IndexError:
+            # print(f'Error: Failed to update qtable at [{x}, {y}]')
+            pass
         return
 
     def predict_next_state(self, x, y, velocity: pg.Vector2):
@@ -131,7 +147,11 @@ class QLearning():
 
     def get_acceleration(self, agent, agent_class_index):
         x, y, danger_angle,agent_class_index, action = self.get_state(agent)
-        actions = self.qtable[x, y, danger_angle, agent_class_index, :]
+
+        try:
+            actions = self.qtable[x, y, danger_angle, agent_class_index, :]
+        except IndexError:
+            return pg.Vector2(0,0)
         return self.create_acceleraion(actions)
 
     def discretized(self, point, range_of_point, resolution):
@@ -236,3 +256,15 @@ class QLearning():
                     else:
                         showable_sprite = pg.transform.rotate(self.ARROW_PREDATOR_SPRITE, angle)
                     screen.blit(showable_sprite, [space_x/4 + i * space_x, space_y/4 + j * space_y])
+
+
+    def should_stop(self):
+            return self.LEARNING and (len(self.environment.fishes) == 0 \
+                or self.frames >= self.max_frames \
+                    or len(self.environment.predators) != cfg.predator()['amount'])
+
+    def setup_stat_file(self):
+        date = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        self.stat_filename = 'stats_%s.csv' % date
+        with open(self.stat_filename, 'w') as stats:
+            stats.write('epochs,average,maximum\n')
