@@ -1,14 +1,15 @@
 import pygame as pg
 import pygame.gfxdraw
-from aifishes.environment import Environment
-from aifishes.fish import Fish
-from aifishes.predator import Predator
+from aifishes.environment.agent import Agent
+from aifishes.environment.predator import Predator
+from aifishes.environment.fish import Fish
 from aifishes.time import Time
 import aifishes.config as cfg
 import aifishes.qlearning as ql
 import numpy as np
 import math
 from aifishes.flocking_behavior import flocking_behavior
+from aifishes.environment.environment import Environment
 
 COLORS = pg.colordict.THECOLORS
 
@@ -31,11 +32,11 @@ class Game:
         self.running = False
         self.qlearning = ql.QLearning(self)
 
-
     def setup(self):
         cfg.load_config()
         self.environment = Environment()
         self.qlearning.set_environment(self.environment)
+        self.time = Time()
         self.running = True
 
     def update(self):
@@ -46,8 +47,6 @@ class Game:
             dtime = self.time.get_dtime()
         state['dtime'] = dtime
         fish_acc = self.apply_behavior(state)
-        # qlearning_acc = self.qlearning.next_step(Fish)
-        # fish_acc = flocking_behavior(state)
         predator_acc = self.qlearning.next_step(Predator)
         data = {
             'dtime': dtime,
@@ -63,8 +62,7 @@ class Game:
             return self.qlearning.next_step(Fish)
 
     def draw(self):
-        state = self.environment.get_state()
-        for agent in state['fishes'] + state['predators']:
+        for agent in self.environment.fishes + self.environment.predators:
             sprite = agent.get_showable()
             self.screen.blit(sprite, agent.position -
                              pg.Vector2(sprite.get_size()) / 2)
@@ -89,6 +87,9 @@ class Game:
                 self.draw()
             self.time.tick()
 
+    def end(self):
+        self.running = False
+
     def events(self):
         global DEBUG
         for event in pg.event.get():
@@ -100,7 +101,7 @@ class Game:
                 if event.key == pg.K_d:
                     DEBUG = not DEBUG
                 if event.key == pg.K_h:
-                    import aifishes.predator as pred
+                    import aifishes.environment.predator as pred
                     pred.DEBUG_HUNT = not pred.DEBUG_HUNT
                 if event.key == pg.K_1:
                     ql.QDEBUG = not ql.QDEBUG

@@ -3,6 +3,7 @@ import aifishes.config as cfg
 import typing
 import pygame as pg
 from shapely.geometry import Polygon
+import math
 
 
 def random_position():
@@ -22,16 +23,17 @@ def random_velocity(magnitude):
 
 
 def scale(value, old, new):
-    return (value / (old[1] - old[0])) * (new[1] - new[0]) + new[0]
+    return ((value - old[0]) / (old[1] - old[0])) * (new[1] - new[0]) + new[0]
 
 
 X_AXIS_VEC = pg.Vector2(1, 0)
 Y_AXIS_VEC = pg.Vector2(0, 1)
 DEBUG_POSITION_COLOR = pg.Color('green')
+SCREEN_WIDTH, SCREEN_HEIGHT = cfg.environment()['dim']
 
 
 class Agent:
-    def __init__(self, sprite: pg.Surface, position: pg.Vector2, velocity: pg.Vector2):
+    def __init__(self, sprite: pg.Surface, position: pg.Vector2, velocity: pg.Vector2, reaction_radius: float):
         self.original_sprite = sprite
         self.showable_sprite = None
         self.hitbox = None
@@ -40,7 +42,38 @@ class Agent:
         self.acceleration = pg.Vector2(0, 0)
         self.alive = True
         self.closest_target = None
+        self.last_observation = None
+        self.current_observation = None
         self.frame = 0
+        self.learning = False
+        self.reward = 0
+        self.update_showable()
+        self.reaction_radius = reaction_radius
+        self.origin_reaction_area = None
+        self._reaction_area = None
+        self.create_reaction_area()
+        self.update_reaction_area()
+        self.max_acc_magnitude = 0
+
+    def create_reaction_area(self, vision_angle=360, n=10):
+        vision_angle = cfg.fish()['vision_angle']
+        start = scale(- vision_angle / 2, [0, 360], [0, 2 * np.pi])
+        end = scale(vision_angle / 2, [0, 360], [0, 2 * np.pi])
+        t = np.linspace(start, end, num=n,  dtype=np.float32)
+        x = np.append(0, self.reaction_radius * np.cos(t))
+        y = np.append(0, self.reaction_radius * np.sin(t))
+        self.origin_reaction_area = np.c_[x, y]
+
+    def update_reaction_area(self):
+        direction = self.velocity.normalize()
+        ''' this is rotation matrix with following sin and cos values of velocity angle'''
+        rotation_matrix = np.array(
+            ((direction[0],  -direction[1]), (direction[1], direction[0])))
+        self._reaction_area = np.array([rotation_matrix.dot(
+            point) for point in self.origin_reaction_area]) + self.position
+
+    def reaction_area(self):
+        return self._reaction_area
 
     def update_position(self, dtime):
         self.position += self.velocity * dtime
@@ -55,8 +88,11 @@ class Agent:
     def update_velocity(self, dtime):
         self.velocity += self.acceleration * dtime
 
-    def apply_force(self, acceleration: pg.Vector2):
+    def set_acceleration(self, acceleration: pg.Vector2):
         self.acceleration = acceleration
+
+    def apply_force(self, acceleration: pg.Vector2):
+        self.acceleration += acceleration
 
     def get_x(self):
         """Name must be 'get_x' for smartquadtree integration"""
@@ -66,30 +102,27 @@ class Agent:
         """Name must be 'get_y' for smartquadtree integration"""
         return self.position[1]
 
-    def get_hitbox(self):
-        # TODO implement hitbox
-        raise NotImplementedError
-
     def update(self, dtime):
         self.update_velocity(dtime)
         self.limit_velocity()
         self.update_position(dtime)
         self.update_showable()
-        self.frame +=1
+        self.update_reaction_area()
+        self.frame += 1
+
+    def update_observation(self, observation):
+        self.last_observation = self.current_observation
+        self.current_observation = observation
 
     def detect_target(self, surroundings):
         self.closest_target = self.choose_closest(surroundings)
 
     def choose_closest(self, surroundings):
-        min_distance = float('inf')
-        closest = None
-        if len(surroundings) > 0:
-            for neighbour in surroundings:
-                distance = self.position.distance_to(neighbour.position)
-                if distance < min_distance and neighbour is not self:
-                    min_distance = distance
-                    closest = neighbour
-        return closest
+        if len(surroundings) == 0:
+            return None
+        surroundings.sort(key=lambda agent: math.sqrt(
+            (self.position.x - agent.position.x) ** 2 + (self.position.y - agent.position.y)**2))
+        return surroundings[0]
 
     def update_showable(self):
         angle = self.velocity.angle_to(X_AXIS_VEC)
@@ -99,9 +132,6 @@ class Agent:
         return self.showable_sprite
 
     def safe_space(self):
-        raise NotImplementedError()
-
-    def reaction_area(self):
         raise NotImplementedError()
 
     def get_hitbox(self):
@@ -122,3 +152,8 @@ class Agent:
 
     def die(self):
         self.alive = False
+
+
+    def steer_to_center(self):
+        to_center = pg.Vector2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2) - self.position
+        self.velocity = self.velocity.lerp(to_center, 0.03)

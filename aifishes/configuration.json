@@ -6,7 +6,7 @@
     "amount": 200,
     "dim": [20, 10],
     "velocity":{
-      "start": 100,
+      "start": 150,
       "min": 100,
       "max": 220
     },
@@ -16,19 +16,20 @@
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 0,
+    "amount": 4,
     "velocity":{
-      "start": 100,
+      "start": 150,
       "min": 100,
-      "max": 200
+      "max": 150
     },
     "reaction_radius":100,
-    "vision_angle": 300
+    "vision_angle": 330
   },
   "environment": {
     "name": "AIFishes",
     "dim": [1280, 720],
-    "border_tolerance": 5
+    "border_tolerance": 10,
+    "turning_tolerance": 30
   },
   "qlearning": {
     "resolution": [20, 20],
@@ -39,7 +40,7 @@
     "learning": true,
     "new_qtable": true,
     "max_epochs": 50,
-    "max_ticks": 1500,
+    "max_ticks": 5000,
     "print_grid": true,
     "print_vectors": true
   },

@@ -73,3 +73,6 @@ def game():
 
 def flocking():
     return get_config()['flocking']
+
+def dqn_vision():
+    return get_config()['dqn_vision']
