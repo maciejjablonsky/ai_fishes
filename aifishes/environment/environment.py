@@ -8,7 +8,6 @@ import numpy as np
 from shapely.geometry import Polygon, Point
 from typing import List
 from functools import reduce
-from torch.tensor import Tensor
 
 QTREE_THRESHOLD = 4
 
@@ -105,15 +104,16 @@ class Environment:
                           for element in self.fish_qtree.elements()]]
         self.fish_qtree.set_mask(gen_border('left', tolerance=tolerance))
         [emigrants.append(emigrant) for emigrant in [element[2]
-                          for element in self.fish_qtree.elements()]]
-        # self.predator_qtree.set_mask(gen_border('top', tolerance=tolerance))
-        # [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
-        # self.predator_qtree.set_mask(gen_border('right', tolerance=tolerance))
-        # [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
-        # self.predator_qtree.set_mask(gen_border('bottom', tolerance=tolerance))
-        # [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
-        # self.predator_qtree.set_mask(gen_border('left', tolerance=tolerance))
-        # [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
+                          for element in self.fish_qtree.elements()]]  
+        if cfg.qlearing()['predators_learning']: 
+            self.predator_qtree.set_mask(gen_border('top', tolerance=tolerance))
+            [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
+            self.predator_qtree.set_mask(gen_border('right', tolerance=tolerance))
+            [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
+            self.predator_qtree.set_mask(gen_border('bottom', tolerance=tolerance))
+            [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
+            self.predator_qtree.set_mask(gen_border('left', tolerance=tolerance))
+            [emigrants.append(emigrant) for emigrant in [element[2] for element in self.predator_qtree.elements()]]
         [emigrant.die() for emigrant in emigrants]
 
     def delete_dead_fishes(self):
