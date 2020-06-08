@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[a4paper, total={7in, 10in}]{geometry}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage[section]{placeins}
+\graphicspath{ {./images/} }
+
+\title{Zastosowanie Qlearningu w zachowaniu boidów}
+\author{Jakub Łęcki, Marek Hering, Maciej Jabłoński}
+\date{08.06.2020}
+\begin{document}
+\maketitle
+\begin{abstract}
+    Tematem niniejszej pracy jest problem nauczenia boidów (w naszym przypadku są to ryby), aby poprzez prawidłowe poruszanie się maksymalizowały swój czas życia. W tym celu użyliśmy koncepcji qlearningu oraz algorytmu stada.
+\end{abstract}
+
+\section{Boidy}
+\subsection{Pochodzenie}
+Termin \textbf{boid} został stworzony przez Craiga Reynoldsa w 1987 roku jako określenie stworzenia wykazującego cechy stadne. Słowo boid wzięło się z uproszeczenia terminu 'boid-like' jako odniesienie do ptaków formujących się w gromady.
+\subsection{Zasady zachowania}
+Okazuje się, że w świecie rzeczywistym wiele gatunków zwierząt łączących się w grupy wykazuje podobne własności. Patrząc na stada ptaków, ławice ryb, roje pszczół lub stada owiec można zauważyć, że każda z jednostek stosuje się do 3 podstawowych zasad:
+\begin{enumerate}
+    \item Rozdzielność - osobnik nie lubi przebywać w tłoku, dlatego zachowuje dystans do swoich sąsiadów
+    \item Spójność - osobnik nie lubi przebywać w samotności, więc kieruje się ku najbliższym współstadnikom 
+    \item Wyrównanie - osobnik porusza się w kierunku zbliżonym do kierunku otaczających członków stada
+\end{enumerate}
+
+Łącząc te 3 proste zasady, boidy tworzą złożone i bardzo zorganizowane skupiska, które obserwujemy jako np. ławice ryb, które pozostają w płynnym, nieustannym ruchu.
+\section{Qlearning}
+Jest to jedna z technik szerokiej dziedziny uczenia maszynowego znanej jako "Uczenie ze wzmocnieniem" (ang. Reinforcement Learning). Jej dwoma głównymi elementami są tablica stanów-akcji zwykle nazywana jako \textbf{qtable} oraz środowisko, po którym porusza się agent.
+\subsection{Qtable}
+Tablica ma wymiary \(n x m\), gdzie:
+\begin{itemize}
+    \item m - liczba możliwych stanów
+\end{itemize}
+
+
+\end{document}
