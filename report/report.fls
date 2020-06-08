@@ -149,7 +149,15 @@ INPUT ./images/4_Qtable_after_5rd_epoch.jpg
 INPUT /home/foreverhungry/code/aquarium_py/report/./images/5_Qtable_after_10th_epoch.jpg
 INPUT ./images/5_Qtable_after_10th_epoch.jpg
 INPUT ./images/5_Qtable_after_10th_epoch.jpg
+INPUT /home/foreverhungry/code/aquarium_py/report/./images/6_Learing_result.jpg
+INPUT ./images/6_Learing_result.jpg
+INPUT ./images/6_Learing_result.jpg
+INPUT /home/foreverhungry/code/aquarium_py/report/./images/borders_learning_plot.png
+INPUT ./images/borders_learning_plot.png
+INPUT ./images/borders_learning_plot.png
+INPUT /usr/share/texmf-dist/fonts/tfm/public/pl/plti10.tfm
 INPUT /home/foreverhungry/code/aquarium_py/report/report.aux
+INPUT /usr/share/texmf-dist/fonts/enc/dvips/pl/plit.enc
 INPUT /usr/share/texmf-dist/fonts/enc/dvips/pl/plrm.enc
 INPUT /usr/share/texmf-dist/fonts/enc/dvips/pl/plmi.enc
 INPUT /usr/share/texmf-dist/fonts/enc/dvips/pl/plme.enc
@@ -168,3 +176,4 @@ INPUT /usr/share/texmf-dist/fonts/type1/public/pl/plr7.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/pl/plr9.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/pl/plsy10.pfb
 INPUT /usr/share/texmf-dist/fonts/type1/public/pl/plsy7.pfb
+INPUT /usr/share/texmf-dist/fonts/type1/public/pl/plti10.pfb

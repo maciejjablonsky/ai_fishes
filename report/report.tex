@@ -137,4 +137,28 @@ Po powyższej zmianie wyniki mają się następująco. Strzałki oznaczają kier
 \end{figure}
 
 Jak widać już po 10 epokach agenci nauczyli się skutecznie unikać krawędzi. Patrząc na kierunki poszczególnych strzałek widzimy, że w tabeli powstało pole, które zbiega się do środka tworząc optymalne ścieżki nawet w nietrywialnych miejscach takich jak rogi planszy. Jest to bardzo korzystne, ponieważ takie miejsca sprawiają zawsze problem w alogorytmicznym wykrywaniu kolizji.
+
+\begin{figure}[H]
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{6_Learing_result.jpg}
+        \caption{Ryby utrzymujące się na środku planszy po nauczeniu}
+    \end{minipage}
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{borders_learning_plot.png}
+        \caption{Wykres przeżywalności ryb w czasie uczenia}
+    \end{minipage}
+\end{figure}
+\section{Polowanie i uciekanie}
+W kolejnym etapie postanowiliśmy dodać do środowiska boidy drugiego rodzaju, tzn. drapieżniki. Ich zadaniem jest manipulowanie swoim ruchem, aby zjadać ryby. W momencie kolizji drapieżnika z rybą następuje śmierć ryby. Drapieżniki tak samo jak ryby umierają na krawędziach planszy.
+\subsection{Qtable}
+Aby umożliwić nauczenie się zarówno uciekania jak i gonienia rozszerzyliśmy tablicę stanów o 2 wymiary. Jeden który indeksuje rodzaj uczącego się boida, drugi natomiast zawiera stany jako dyskretny kąt pod którym agent widzi swój cel. Celem odpowiednio jest najbliższa ryba dla drapieżnika i najbliższy drapieżnik dla ryby.
+\subsection{Pole reakcji}
+Odnajdywanie najbliższego celu dla każdego boida na planszy ma istotne wady.
+\begin{enumerate}
+    \item Jest wysoce nieoptymalne, ponieważ wymaga przeszukania każdy z każdym więc ma czas \(O(n^2)\)
+    \item Sugeruje, że boid posiada wiedzę \textit{a priori} o położeniu dowolnego innego boida, co nie pokrywa się z rzeczywistością, gdzie każdy organizm ma ograniczone pole widzenia i reakcji.
+\end{enumerate}
 \end{document}
