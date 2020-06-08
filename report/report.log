@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2020.5.29)  8 JUN 2020 16:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2020.5.29)  8 JUN 2020 20:37
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -218,38 +218,66 @@ LaTeX Info: Redefining \addtolength on input line 81.
 \stackedbox=\box33
 \@centerbox=\box34
 \c@ROWcellindex@=\count118
+) (/usr/share/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2019/09/01 v1.3a Sub-captions (AR)
+ (/usr/share/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2019/09/01 v3.3d Customizing captions (AR)
+ (/usr/share/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2019/09/01 v1.8d caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 64.
+\captionmargin=\dimen128
+\captionmargin@=\dimen129
+\captionwidth=\dimen130
+\caption@tempdima=\dimen131
+\caption@indent=\dimen132
+\caption@parindent=\dimen133
+\caption@hangindent=\dimen134
+)
+\c@caption@flags=\count119
+\c@ContinuedFloat=\count120
+Package caption Info: listings package is loaded.
+)
+\c@subfigure=\count121
+\c@subtable=\count122
+) (/usr/share/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count123
+\float@exts=\toks24
+\float@box=\box35
+\@float@everytoks=\toks25
+\@floatcapt=\box36
 ) (/usr/share/texmf-dist/tex/latex/placeins/placeins.sty
 Package: placeins 2005/04/18  v 2.2
 ) (/home/foreverhungry/code/aquarium_py/report/report.aux)
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OT4/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
  (/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count119
-\scratchdimen=\dimen128
-\scratchbox=\box35
-\nofMPsegments=\count120
-\nofMParguments=\count121
-\everyMPshowfont=\toks24
-\MPscratchCnt=\count122
-\MPscratchDim=\dimen129
-\MPnumerator=\count123
-\makeMPintoPDFobject=\count124
-\everyMPtoPDFconversion=\toks25
+\scratchcounter=\count124
+\scratchdimen=\dimen135
+\scratchbox=\box37
+\nofMPsegments=\count125
+\nofMParguments=\count126
+\everyMPshowfont=\toks26
+\MPscratchCnt=\count127
+\MPscratchDim=\dimen136
+\MPnumerator=\count128
+\makeMPintoPDFobject=\count129
+\everyMPtoPDFconversion=\toks27
 ) (/usr/share/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
  (/usr/share/texmf-dist/tex/generic/oberdiek/infwarerr.sty
@@ -317,53 +345,83 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\c@lstlisting=\count125
-LaTeX Font Info:    Trying to load font information for OML+plm on input line 16.
+\c@lstlisting=\count130
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Trying to load font information for OML+plm on input line 19.
 (/usr/share/texmf-dist/tex/latex/polski/omlplm.fd
 File: omlplm.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 )
-LaTeX Font Info:    Trying to load font information for OMS+plsy on input line 16.
+LaTeX Font Info:    Trying to load font information for OMS+plsy on input line 19.
  (/usr/share/texmf-dist/tex/latex/polski/omsplsy.fd
 File: omsplsy.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 )
-LaTeX Font Info:    Trying to load font information for OMX+plex on input line 16.
+LaTeX Font Info:    Trying to load font information for OMX+plex on input line 19.
  (/usr/share/texmf-dist/tex/latex/polski/omxplex.fd
 File: omxplex.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 )
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <12> on input line 16.
+(Font)              <12> on input line 19.
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <8> on input line 16.
+(Font)              <8> on input line 19.
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <6> on input line 16.
+(Font)              <6> on input line 19.
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <10> on input line 36.
+(Font)              <10> on input line 39.
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <7> on input line 36.
+(Font)              <7> on input line 39.
 LaTeX Font Info:    External font `plex10' loaded for size
-(Font)              <5> on input line 36.
-LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 38.
+(Font)              <5> on input line 39.
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 41.
  (/usr/share/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 38.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 41.
  [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (/home/foreverhungry/code/aquarium_py/report/report.aux) ) 
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
+<./images/1_Qtable_init.jpg, id=21, 965.10562pt x 543.53062pt>
+File: ./images/1_Qtable_init.jpg Graphic file (type jpg)
+<use ./images/1_Qtable_init.jpg>
+Package pdftex.def Info: ./images/1_Qtable_init.jpg  used on input line 94.
+(pdftex.def)             Requested size: 379.4175pt x 213.67627pt.
+ [3 <./images/1_Qtable_init.jpg>]
+<./images/2_Qtable_after_2nd_epoch.jpg, id=27, 965.10562pt x 544.28343pt>
+File: ./images/2_Qtable_after_2nd_epoch.jpg Graphic file (type jpg)
+<use ./images/2_Qtable_after_2nd_epoch.jpg>
+Package pdftex.def Info: ./images/2_Qtable_after_2nd_epoch.jpg  used on input line 115.
+(pdftex.def)             Requested size: 242.82503pt x 136.94255pt.
+<./images/3_Qtable_after_3rd_epoch.jpg, id=28, 965.85844pt x 545.03625pt>
+File: ./images/3_Qtable_after_3rd_epoch.jpg Graphic file (type jpg)
+<use ./images/3_Qtable_after_3rd_epoch.jpg>
+Package pdftex.def Info: ./images/3_Qtable_after_3rd_epoch.jpg  used on input line 121.
+(pdftex.def)             Requested size: 242.82503pt x 137.02385pt.
+<./images/4_Qtable_after_5rd_epoch.jpg, id=29, 966.61125pt x 545.03625pt>
+File: ./images/4_Qtable_after_5rd_epoch.jpg Graphic file (type jpg)
+<use ./images/4_Qtable_after_5rd_epoch.jpg>
+Package pdftex.def Info: ./images/4_Qtable_after_5rd_epoch.jpg  used on input line 128.
+(pdftex.def)             Requested size: 242.82503pt x 136.91574pt.
+<./images/5_Qtable_after_10th_epoch.jpg, id=30, 966.61125pt x 543.53062pt>
+File: ./images/5_Qtable_after_10th_epoch.jpg Graphic file (type jpg)
+<use ./images/5_Qtable_after_10th_epoch.jpg>
+Package pdftex.def Info: ./images/5_Qtable_after_10th_epoch.jpg  used on input line 134.
+(pdftex.def)             Requested size: 242.82503pt x 136.5375pt.
+ [4 <./images/2_Qtable_after_2nd_epoch.jpg> <./images/3_Qtable_after_3rd_epoch.jpg> <./images/4_Qtable_after_5rd_epoch.jpg> <./images/5_Qtable_after_10th_epoch.jpg>] (/home/foreverhungry/code/aquarium_py/report/report.aux) ) 
 Here is how much of TeX's memory you used:
- 4883 strings out of 492167
- 66679 string characters out of 6131558
- 150146 words of memory out of 5000000
- 9157 multiletter control sequences out of 15000+600000
+ 6133 strings out of 492167
+ 89317 string characters out of 6131558
+ 174590 words of memory out of 5000000
+ 10387 multiletter control sequences out of 15000+600000
  14284 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 46i,6n,36p,920b,219s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf-dist/fonts/enc/dvips/pl/plme.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plms.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plrm.enc}</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx12.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx9.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plex10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plmi10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr12.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr17.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr9.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plsy10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plsy7.pfb>
-Output written on /home/foreverhungry/code/aquarium_py/report/report.pdf (2 pages, 86075 bytes).
+ 46i,7n,46p,913b,347s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf-dist/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plme.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plms.enc}</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx12.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx9.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plex10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plmi10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plmi7.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr12.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr17.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr7.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr9.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plsy10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plsy7.pfb>
+Output written on /home/foreverhungry/code/aquarium_py/report/report.pdf (4 pages, 2059772 bytes).
 PDF statistics:
- 63 PDF objects out of 1000 (max. 8388607)
- 46 compressed objects within 1 object stream
+ 82 PDF objects out of 1000 (max. 8388607)
+ 56 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

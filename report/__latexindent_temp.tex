@@ -109,32 +109,33 @@ W tradycyjnym algorytmie qlearningu, równanie (\ref{eqn:bellman_equation}) Bell
 \subsection{Stan tabeli z nową polityką nagród} 
 Po powyższej zmianie wyniki mają się następująco. Strzałki oznaczają kierunek wypadkowego przyśpieszenia.
 
-\begin{figure}[H]
-    \begin{minipage}[h]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{2_Qtable_after_2nd_epoch.jpg}
-        \caption{Stan tabeli po dwóch epokach}
-    \end{minipage}
-    \hspace{0.02\textwidth}
-    \begin{minipage}[h]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{3_Qtable_after_3rd_epoch.jpg}    
-        \caption{Stan tabeli po 3 epokach}
-    \end{minipage}
-\end{figure}
-\begin{figure}[H]
-    \begin{minipage}[h]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{4_Qtable_after_5rd_epoch.jpg}
-        \caption{Stan tabeli po 5 epokach}
-    \end{minipage}
-    \hspace{0.02\textwidth}
-    \begin{minipage}[h]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{5_Qtable_after_10th_epoch.jpg}
-        \caption{Stan tabeli po 10 epokach}
-    \end{minipage}
-\end{figure}
+    \begin{figure}[H]
+        \begin{minipage}[h]{0.48\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{2_Qtable_after_2nd_epoch.jpg}
+            \caption{Stan tabeli po dwóch epokach}
+        \end{minipage}
+        \hspace{0.02\textwidth}
+        \begin{minipage}[h]{0.48\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{3_Qtable_after_3rd_epoch.jpg}    
+            \caption{Stan tabeli po 3 epokach}
+        \end{minipage}
+    \end{figure}
+    \begin{figure}[H]
+        \begin{minipage}[h]{0.48\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{4_Qtable_after_5rd_epoch.jpg}
+            \caption{Stan tabeli po 5 epokach}
+        \end{minipage}
+        \hspace{0.02\textwidth}
+        \begin{minipage}[h]{0.48\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{5_Qtable_after_10th_epoch.jpg}
+            \caption{Stan tabeli po 10 epokach}
+        \end{minipage}
+    \end{figure}
 
-Jak widać już po 10 epokach agenci nauczyli się skutecznie unikać krawędzi. Patrząc na kierunki poszczególnych strzałek widzimy, że w tabeli powstało pole, które zbiega się do środka tworząc optymalne ścieżki nawet w nietrywialnych miejscach takich jak rogi planszy. Jest to bardzo korzystne, ponieważ takie miejsca sprawiają zawsze problem w alogorytmicznym wykrywaniu kolizji.
+
+
 \end{document}
