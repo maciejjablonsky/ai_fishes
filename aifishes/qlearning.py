@@ -118,7 +118,7 @@ class QLearning():
                 reward += round((pg.Vector2(target_vec + velocity_vec).length() - 1 ) * 200)
             else:
                 reward -= round((pg.Vector2(target_vec + velocity_vec).length() - 1) * 400)
-                if agent.closest_target.alive == 0:
+                if not agent.closest_target.alive:
                     reward += 500
 
 
@@ -136,6 +136,7 @@ class QLearning():
         if predator is None:
             return 0
         direction_vec = (predator.position - agent.position).normalize()
+        '''In case when predator is not available +1'''
         return self.action_reader(direction_vec) + 1
 
     def action_reader(self, vector: pg.Vector2):
