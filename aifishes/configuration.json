@@ -1,27 +1,54 @@
 {
+  "game": {
+    "draw": true 
+  },
   "fish": {
-    "amount": 500,
-    "dim": [15, 10],
+    "amount": 200,
+    "dim": [15, 7],
     "velocity":{
-      "start": 50,
-      "max": 100
+      "start": 150,
+      "min": 100,
+      "max": 190
     },
-    "reaction_radius": 50,
-    "vision_angle":300
+    "reaction_radius": 140,
+    "vision_angle":300,
+    "safe_distance":50
   },
   "predator": {
-    "dim": [20, 13],
-    "amount": 5,
+    "dim": [20, 12],
+    "amount": 0,
     "velocity":{
-      "start": 100, 
-      "max": 200
+      "start": 150,
+      "min": 100,
+      "max": 170
     },
-    "reaction_radius":100,
-    "vision_angle": 100
+    "reaction_radius":120,
+    "vision_angle": 330
   },
   "environment": {
     "name": "AIFishes",
     "dim": [1280, 720],
-    "border_tolerance": 5
-  }
+    "border_tolerance": 10,
+    "turning_tolerance": 30
+  },
+  "qlearning": {
+    "resolution": [25, 25],
+    "alpha": 0.82,
+    "gamma": 0.97,
+    "epsilon": 1,
+    "number_of_directions": 12,
+    "learning": false, 
+    "new_qtable": false,
+    "max_epochs": 50,
+    "max_ticks": 50000,
+    "print_grid": true,
+    "print_vectors": true,
+    "predators_learning": false
+  },
+  "flocking": {
+    "flocking_on": true,
+    "cohesion":1,
+    "separation":1,
+    "alignment":1.5
+    }
 }
