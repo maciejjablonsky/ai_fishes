@@ -156,6 +156,9 @@ INPUT /home/foreverhungry/code/aquarium_py/report/./images/borders_learning_plot
 INPUT ./images/borders_learning_plot.png
 INPUT ./images/borders_learning_plot.png
 INPUT /usr/share/texmf-dist/fonts/tfm/public/pl/plti10.tfm
+INPUT /home/foreverhungry/code/aquarium_py/report/./images/12_hunting_debug.jpg
+INPUT ./images/12_hunting_debug.jpg
+INPUT ./images/12_hunting_debug.jpg
 INPUT /home/foreverhungry/code/aquarium_py/report/report.aux
 INPUT /usr/share/texmf-dist/fonts/enc/dvips/pl/plit.enc
 INPUT /usr/share/texmf-dist/fonts/enc/dvips/pl/plrm.enc

@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1591644633 "/home/foreverhungry/code/aquarium_py/report/report.tex" "/home/foreverhungry/code/aquarium_py/report/report.pdf" "report" 1591644634
-  "/home/foreverhungry/code/aquarium_py/report/report.aux" 1591644634 3491 c5b25f6b098d0587ad1227f8e51dcc44 ""
-  "/home/foreverhungry/code/aquarium_py/report/report.tex" 1591644632 12533 a1ed9de21a9f221545c5bf3d70d3c8d7 ""
+["pdflatex"] 1591663115 "/home/foreverhungry/code/aquarium_py/report/report.tex" "/home/foreverhungry/code/aquarium_py/report/report.pdf" "report" 1591663115
+  "/home/foreverhungry/code/aquarium_py/report/report.aux" 1591663115 3649 32dc225b753e443cacb53863ed607331 ""
+  "/home/foreverhungry/code/aquarium_py/report/report.tex" 1591663114 12945 7c73572e32e10e7b652ed3a5bf4f38ae ""
   "/usr/share/texmf-dist/fonts/enc/dvips/pl/plit.enc" 1572595918 1946 62ba825cda1ff16dbaa60d53ac60525a ""
   "/usr/share/texmf-dist/fonts/enc/dvips/pl/plme.enc" 1572595918 3126 59f33ff3e396436ebc36f4e7b444d5c4 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/pl/plmi.enc" 1572595918 2005 f094775651a1386335c158fb632529f1 ""
@@ -100,6 +100,7 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1572595918 33301 a3134070eacafb10b1f371612ce2650d ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1590766324 4572998 f9631eebba48c3ee98e5d310044b0a09 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1590766311 8044939 62c40ec23f61ea9e9f4884117d2bd7f2 ""
+  "images/12_hunting_debug.jpg" 1590932892 385662 f3e20d429f7efb2268942346683e703a ""
   "images/1_Qtable_init.jpg" 1590927786 235330 926e3d90ba7ca704684a00c1b62190bf ""
   "images/2_Qtable_after_2nd_epoch.jpg" 1590927984 373637 477c3967a6caeb15937302da98b1ff9f ""
   "images/3_Qtable_after_3rd_epoch.jpg" 1590928108 437019 f23e1f142be11abf64a5f01ca9569d3c ""
@@ -107,11 +108,11 @@
   "images/5_Qtable_after_10th_epoch.jpg" 1590928770 452705 a7b9dff7eecdd30d04842b8f43522d5b ""
   "images/6_Learing_result.jpg" 1590928870 76169 931af60efc541ed0b751b3c57b5889dc ""
   "images/borders_learning_plot.png" 1591641957 15329 0e5712626bd905f5cbea06c94270e91d ""
-  "report.aux" 1591644634 3491 c5b25f6b098d0587ad1227f8e51dcc44 "pdflatex"
-  "report.tex" 1591644632 12533 a1ed9de21a9f221545c5bf3d70d3c8d7 ""
+  "report.aux" 1591663115 3649 32dc225b753e443cacb53863ed607331 "pdflatex"
+  "report.tex" 1591663114 12945 7c73572e32e10e7b652ed3a5bf4f38ae ""
   (generated)
-  "report.pdf"
-  "/home/foreverhungry/code/aquarium_py/report/report.pdf"
+  "report.aux"
   "report.log"
   "/home/foreverhungry/code/aquarium_py/report/report.log"
-  "report.aux"
+  "/home/foreverhungry/code/aquarium_py/report/report.pdf"
+  "report.pdf"

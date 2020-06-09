@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2020.5.29)  8 JUN 2020 21:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Arch Linux) (preloaded format=pdflatex 2020.5.29)  9 JUN 2020 02:38
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -418,20 +418,26 @@ File: ./images/borders_learning_plot.png Graphic file (type png)
 <use ./images/borders_learning_plot.png>
 Package pdftex.def Info: ./images/borders_learning_plot.png  used on input line 150.
 (pdftex.def)             Requested size: 242.82503pt x 144.20523pt.
- [4 <./images/2_Qtable_after_2nd_epoch.jpg> <./images/3_Qtable_after_3rd_epoch.jpg> <./images/4_Qtable_after_5rd_epoch.jpg> <./images/5_Qtable_after_10th_epoch.jpg>] [5 <./images/6_Learing_result.jpg> <./images/borders_learning_plot.png>] (/home/foreverhungry/code/aquarium_py/report/report.aux) ) 
+ [4 <./images/2_Qtable_after_2nd_epoch.jpg> <./images/3_Qtable_after_3rd_epoch.jpg> <./images/4_Qtable_after_5rd_epoch.jpg> <./images/5_Qtable_after_10th_epoch.jpg>]
+<./images/12_hunting_debug.jpg, id=36, 969.6225pt x 548.80031pt>
+File: ./images/12_hunting_debug.jpg Graphic file (type jpg)
+<use ./images/12_hunting_debug.jpg>
+Package pdftex.def Info: ./images/12_hunting_debug.jpg  used on input line 167.
+(pdftex.def)             Requested size: 354.12144pt x 200.43185pt.
+ [5 <./images/6_Learing_result.jpg> <./images/borders_learning_plot.png> <./images/12_hunting_debug.jpg>] (/home/foreverhungry/code/aquarium_py/report/report.aux) ) 
 Here is how much of TeX's memory you used:
- 6150 strings out of 492167
- 89775 string characters out of 6131558
+ 6157 strings out of 492167
+ 89974 string characters out of 6131558
  174590 words of memory out of 5000000
- 10400 multiletter control sequences out of 15000+600000
+ 10406 multiletter control sequences out of 15000+600000
  14820 words of font info for 41 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  46i,7n,46p,913b,347s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf-dist/fonts/enc/dvips/pl/plit.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plmi.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plme.enc}{/usr/share/texmf-dist/fonts/enc/dvips/pl/plms.enc}</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx12.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plbx9.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plex10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plmi10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plmi7.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr12.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr17.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr7.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plr9.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plsy10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plsy7.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plti10.pfb>
-Output written on /home/foreverhungry/code/aquarium_py/report/report.pdf (5 pages, 2157750 bytes).
+Output written on /home/foreverhungry/code/aquarium_py/report/report.pdf (5 pages, 2543895 bytes).
 PDF statistics:
- 92 PDF objects out of 1000 (max. 8388607)
+ 93 PDF objects out of 1000 (max. 8388607)
  62 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 36 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
