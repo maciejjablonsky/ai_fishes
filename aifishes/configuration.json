@@ -1,28 +1,28 @@
 {
   "game": {
-    "draw": true
+    "draw": true 
   },
   "fish": {
-    "amount": 50,
+    "amount": 200,
     "dim": [15, 7],
     "velocity":{
       "start": 150,
       "min": 100,
-      "max": 220
+      "max": 190
     },
-    "reaction_radius": 130,
-    "vision_angle":360,
+    "reaction_radius": 140,
+    "vision_angle":300,
     "safe_distance":50
   },
   "predator": {
     "dim": [20, 12],
-    "amount": 4,
+    "amount": 0,
     "velocity":{
       "start": 150,
       "min": 100,
-      "max": 150
+      "max": 170
     },
-    "reaction_radius":100,
+    "reaction_radius":120,
     "vision_angle": 330
   },
   "environment": {
@@ -37,8 +37,8 @@
     "gamma": 0.97,
     "epsilon": 1,
     "number_of_directions": 12,
-    "learning": true,
-    "new_qtable": true,
+    "learning": false, 
+    "new_qtable": false,
     "max_epochs": 50,
     "max_ticks": 50000,
     "print_grid": true,

@@ -162,9 +162,9 @@ Aby umożliwić nauczenie się zarówno uciekania jak i gonienia rozszerzyliśmy
 Odnajdywanie najbliższego celu dla każdego boida na planszy spośród wszystkich boidów ma istotne wady.
 \begin{enumerate}
     \item Jest wysoce nieoptymalne, ponieważ wymaga przeszukania każdy z każdym więc ma czas \(O(n^2)\)
-    \item Sugeruje, że boid posiada wiedzę \textit{a priori} o położeniu dowolnego innego boida, co nie pokrywa się z rzeczywistością,gdzie każdy organizm ma ograniczone pole widzenia i reakcji.
+    \item Sugeruje, że boid posiada wiedzę \textit{a priori} o położeniu dowolnego innego boida, co nie pokrywa się z rzeczywistością, gdzie każdy organizm ma ograniczone pole widzenia i reakcji.
 \end{enumerate}
-W celu zasymulowania pola reakcji, każdy z boidów posiada poligon z regulowanym kątem widzenia, ograniczający odziaływanie pozostałych boidów tylko do tych które znajdują się wewnątrz wielokąta.
+W celu zasymulowania pola reakcji, każdy z boidów posiada poligon z regulowanym kątem widzenia, ograniczający odziaływanie pozostałych boidów tylko do tych, które znajdują się wewnątrz wielokąta.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\textwidth]{12_hunting_debug.jpg}
