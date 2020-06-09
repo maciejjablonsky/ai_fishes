@@ -9,6 +9,7 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{graphicx}
+\renewcommand{\vec}[1]{\mathbf{#1}}
 \usepackage[section]{placeins}
 \graphicspath{ {./images/} }
 
@@ -25,6 +26,7 @@
 \subsection{Pochodzenie}
 Termin \textbf{boid} został stworzony przez Craiga Reynoldsa w 1987 roku jako określenie stworzenia wykazującego cechy stadne. Słowo boid wzięło się z uproszeczenia terminu 'bird-like' jako odniesienie do ptaków formujących się w gromady.
 \subsection{Zasady zachowania}
+\label{sec:flocking_behavior}
 Okazuje się, że w świecie rzeczywistym wiele gatunków zwierząt łączących się w grupy wykazuje podobne własności. Patrząc na stada ptaków, ławice ryb, roje pszczół lub stada owiec można zauważyć, że każda z jednostek stosuje się do 3 podstawowych zasad:
 \begin{enumerate}
     \item Rozdzielność - osobnik nie lubi przebywać w tłoku, dlatego zachowuje dystans do swoich sąsiadów
@@ -105,6 +107,7 @@ Boid za dotknięcie granicy otrzymuje nagrodę o wysokości -1000.
 \subsection{Wynik}
 Boidy dość skutecznie utrzymywały się przy życiu, jednak ich ruch bardziej przypominał odbijanie się niż omijanie krawędzi. Wynika to z faktu, że nagroda wyznaczana jest tylko w tej komórce w której agent zginie, nie ma żadnej relacji pomiędzy sąsiednimi stanami, więc reakcja następowała tylko tuż przy granicy.
 \subsection{Modyfikacja polityki aktualizacji tablicy stanów}
+\label{sec:politics_modification}
 W tradycyjnym algorytmie qlearningu, równanie (\ref{eqn:bellman_equation}) Bellmana aktualizuje stan przez wybranie maksymalnej nagrody możliwej do uzyskania. W naszym przypadku nie jest to skuteczne, ponieważ wykonanie akcji nie skutkuje natychmiastowym uzyskaniem nagrody. Aby umożliwić agentowi ocenienie czy warto ruszyć się w danym kierunku zrezygnowaliśmy z wybierania wartości maksymalnej. Zamiast tego bierzemy wszystkie możliwe nagrody do uzyskania po wyjściu z obecnego stanu i liczymy średnią arytmetyczną z minimalnej i maksymalnej nagrody. Dzięki temu w tabeli stanów powstaje swego rodzaju dyskretne pole siłowe, które nadaje boidom kierunek w którym powinny się udać.
 \subsection{Stan tabeli z nową polityką nagród} 
 Po powyższej zmianie wyniki mają się następująco. Strzałki oznaczają kierunek wypadkowego przyśpieszenia.
@@ -159,7 +162,7 @@ Aby umożliwić nauczenie się zarówno uciekania jak i gonienia rozszerzyliśmy
 Odnajdywanie najbliższego celu dla każdego boida na planszy spośród wszystkich boidów ma istotne wady.
 \begin{enumerate}
     \item Jest wysoce nieoptymalne, ponieważ wymaga przeszukania każdy z każdym więc ma czas \(O(n^2)\)
-    \item Sugeruje, że boid posiada wiedzę \textit{a priori} o położeniu dowolnego innego boida, co nie pokrywa się z rzeczywistością, gdzie każdy organizm ma ograniczone pole widzenia i reakcji.
+    \item Sugeruje, że boid posiada wiedzę \textit{a priori} o położeniu dowolnego innego boida, co nie pokrywa się z rzeczywistością,gdzie każdy organizm ma ograniczone pole widzenia i reakcji.
 \end{enumerate}
 W celu zasymulowania pola reakcji, każdy z boidów posiada poligon z regulowanym kątem widzenia, ograniczający odziaływanie pozostałych boidów tylko do tych które znajdują się wewnątrz wielokąta.
 \begin{figure}[h]
@@ -167,5 +170,148 @@ W celu zasymulowania pola reakcji, każdy z boidów posiada poligon z regulowany
     \includegraphics[width=0.7\textwidth]{12_hunting_debug.jpg}
     \caption{Przykładowy widok pól reakcji każdego z boidów}
 \end{figure}
+\begin{figure}[H]
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{9_Fish_seeing_predator.jpg}
+        \caption{Ryba, która widzi drapieżnika w swoim polu reakcji}
+    \end{minipage}
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{10_Predator_seeing_fish.jpg}
+        \caption{Drapieżnik widzący rybę w soim polu reakcji}
+    \end{minipage}
+\end{figure}
+\subsection{Proces uczenia}
+Drapieżniki tak samo jak ryby muszą nauczyć się unikać krawędzi, zatem w pierwszej kolejności na planszy znajdowała się duża liczba drapieżników, aby szybko nauczyły się omijać granice planszy.
+\begin{figure}[H]
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{7_Predator_Qtable_init.jpg}
+        \caption{Wizualizacja tablicy stanów drapieżników na początku uczenia}
+    \end{minipage}
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{8_Predator_learning_result.jpg}
+        \caption{Wizualizacja tablicy stanów po zakończonym uczeniu}
+    \end{minipage}
+\end{figure}
+Jak widać na powyższym rysunku drapieżniki osiągają podobne wyniki do zwykłych ryb.
+Kolejnym krokiem było dodanie ryb, które jednocześnie uczyły się omijać krawędzie, a także uciekać przed drapieżnikami. Drapieżniki natomiast umiejąc omijać już krawędzie mogły skupić się na doskonaleniu polowania.
+\subsection{Nagrody}
+Pozostawienie tylko jednej kary za śmierć o wartości -1000 było zbyt mało efektywne, dlatego dodaliśmy nagrodę dla drapieżnika za złapanie ryby w wysokości 500, oraz nagrody odpowiednio:
+\begin{itemize}
+    \item dla ryby nagroda z przedziału \(<-200, 200>\) proporcjonalna do kąta pomiędzy wektorem widzenia drapieżnika, a prędkością ryby
+    \item dla drapieżnika kara z przedziału \(<-400, 400>\) proporcjonalna do kąta pomiędzy wektorem widzenia ryby, a prędkością drapieżnika
+\end{itemize}
+\subsection{Wyniki}
+Po 50 epokach zarówno drapieżniki jak i ryby nauczyły się dosyć sprawnie poruszać i reagować na sytuację w otoczeniu. Przy 50 rybach i 4 drapieżnikach sytuacja wyglądała następująco.
+\begin{figure}[H]
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fish_being_followed.png}
+        \caption{Ryba która widzi drapieżnika w prawym dolnym rogu}
+    \end{minipage}
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{hunting_predator.png}
+        \caption{Drapieżnik, który widzi rybę w prawym górnym rogu}
+    \end{minipage}
+    \caption{Wizualizacja tablicy stanów w zależności od kąta widzenia celu}
+    \label{fig:angle_to_objective}
+\end{figure}
+Na ilustracji \ref{fig:angle_to_objective} widać w jaki sposób boid poruszałby się gdyby stosowałby się tylko do reakcji na cel. Oczywiście jednocześnie działa też unikanie krawędzi stąd boid zadziała pod wpływem wypadkowej siły.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{possible_track.png}
+    \caption{Możliwa droga, którą ryba będzie się przemieszczać kiedy będzie goniona od strony prawego górnego rogu}
+\end{figure}
+\begin{figure}[H]
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{boid_opposite_direction.png}
+        \caption{Ryby, które wykryją w swoim polu reakcji drapieżnika dobierają optymalny kierunek ucieczki.}
+    \end{minipage}
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fish_fleeing.png}
+        \caption{Drapieżnik odstrasza ryby, tworząc wokól siebie pustą przestrzeń.}
+    \end{minipage}
+\end{figure}
+\section{Zachowanie ławicowe}
+Ostatnim etapem naszego projektu było zaimplementowanie algorytmicznego zachowania ławicy wspomnianego w sekcji \ref{sec:flocking_behavior} oraz porównanie czy w połączeniu z qlearningiem wpływa korzystnie na zachowanie ryb.
+\subsection{Implementacja}
+Do wykrywania sąsiedztwa boida wykorzystaliśmy wcześniej przygotowane pole reakcji.
+\subsubsection{Rozdzielność}
+Zasada rozdzielności obliczana jest jako ujemna suma różnic pomiędzy położeniem najbliższym sąsiadów a boidem.
+\begin{equation}
+    \vec{s} = - \sum\limits_{i=1}^n( \vec{m_i} - \vec{p})
+\end{equation}
+gdzie \(m_i\) to pozycja i-tego sąsiada, \(p\) to pozycja obecnego boida, a \(n\) to ilość sąsiadów w polu reakcji.
+\subsubsection{Spójność}
+Zasada spójności liczona jest jako różnica pomiędzy średnim położeniem sąsiadów, a położeniem boida.
+\begin{equation}
+    \vec{c} = \frac{1}{n} \cdot \sum\limits_{i=1}^n \vec{m_i} - \vec{p}
+\end{equation}
+gdzie \(m_i\) to pozycja i-tego sąsiada, \(p\) to pozycja obecnego boida, a \(n\) to ilość sąsiadów w polu reakcji.
+\subsubsection{Wyrównanie}
+Zasada wyrównania obliczana jest jako różnica pomiędzy średnią prędkością sąsiadów,  a prędkością boida.
+\begin{equation}
+    \vec{a} = \frac{1}{n}\cdot\sum\limits_{i=1}^{n}\vec{v_i} - \vec{v}
+\end{equation}
+gdzie \(v\) to prędkość boida, \(v_i\) prędkość i-tego sąsiada, a \(n\) to ilość sąsiadów w polu reakcji.
+\subsubsection{Wypadkowa}
+Końcowy wektor sterujący boidem w ławicy określony jest wzorem:
+\begin{equation}
+    \vec{F} = m\cdot\vec{s} + k\cdot\vec{c} + l\cdot\vec{a}
+\end{equation}
+gdzie \(m, k, l\) to współczynniki za pomocą których możliwe jest dostrojenie algorytmu do oczekiwanego efektu.
+\subsection{Efekt}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{flocking_example.png}
+    \caption{Przykładowy wygląd kilku ławic w w których ryby zachowują do siebie dystans a także wyrównują swoją prędkość do sąsiadów.}
+\end{figure}
+\subsection{Porównanie z qlearningiem}
+Podczas obserwowania symulacji zauważyliśmy, że kumulowanie wniosków z qtable razem z siłą sterującą w ławicy daje ciekawy efekt podczas uczenia. Mianowicie boidy odziałowują na siebie w każdej chwili, dlatego kiedy kilka boidów rozbijało się o krawędź, reszta ławicy która była za nimi zmieniała swój kierunek jednocześnie aktualizując znacznie większą część tablicy stanów.\\
+Jednocześnie postanowiliśmy podać rybom zasadę, aby sugerowały się zarówno qlearningiem jak i ławicą kiedy nie widzą drapieżnika, natomiast samym qlearningiem jeśli drapieżnik jest w polu reakcji. Dało to interesujące wizualnie efekty, ponieważ kiedy jedna ryba unikała drapieżnika, reszta ławicy mimo że go nie widziała, dopasowywała swój ruch do uciekającej. 
+\subsection{Pomiary}
+W celu zmierzenia jak dokładnie radzą sobie ryby z podanym zachowaniem, uczyliśmy ryby oddzielnie z samym qlearningiem oraz z qlearningiem wspieranym przez zachowanie ławicowe. Ponieważ drapieżniki do tej pory również uczyły sie, a jednoczesne uczenie ryb i drapieżników nie pozwoliłoby zebrać znaczących pomiarów zmieniliśmy zachowanie zachowanie drapieżników. Drapieżnik kieruje się do najbliższej widocznej ryby, chyba że jest blisko granicy wtedy kieruje się ku środkowi planszy, a także drapieżniki wzajemnie odpychają się, aby zapobiec tłoczeniu się na środku planszy.
 
+\begin{figure}[H]
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maximum_lifetime.png}
+        \caption{Maksymalny czas życia przy kącie widzenia \(360^{\circ}\)} 
+    \end{minipage}
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{average_lifetime.png}
+        \caption{Średni czas życia przy kącie widzenia \(360^{\circ}\)}
+    \end{minipage}
+\end{figure}
+Pomiary zostaly dokonane poprzez uśrednienie wyników z 5 procesów uczenia. Jak widać wbrew oczekiwaniom ryby z zachowaniem ławicowym osiągają gorsze wyniki niż bez. Może to być efekt podanego pełnego kąta widzenia, ryby widzą za dużo i gubią się lub bez zachowania ławicy mogą lepiej wykorzystać pełną wizję. 
+\begin{figure}[H]
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{maximum_lifetime_angle_300.png}
+        \caption{Maksymalny czas życia przy kącie widzenia \(300^{\circ}\)}
+    \end{minipage}
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{average_lifetime_angle_300.png}
+        \caption{Średni czas życia przy kącie widzenia \(300^{\circ}\)}
+    \end{minipage}
+\end{figure}
+Wbrew oczekiwaniom tutaj również przewagę ma czysty qlearning. Jest to interesujące ponieważ oczekiwanym wynikiem była przewaga zachowania ławicowego przez to że ryby nie widzą co jest za nimi, mogą jedynie reagować na zachowanie sąsiadów. Wprowadzenie algorytmu ławicowego daje bardzo ładne wrażenia wizualne, jednak wykres pokazuje że sztywne zachowanie w pewnych sytuacjach musi powodować ogłupienie boida, zatem stosując qlearning nie powinniśmy wprowadzać innych systemów decyzyjnych.
+\section{Wnioski}
+Qlearning jest ciekawą i prostą do zaimplementowania techniką uczenia, która nie wymaga w zasadzie żadnych zewnętrznych bibliotek, wystarczy jedna tablica i sposób jej aktualizowania. Bardzo dobrze radzi sobie z problemami w których można w jasny sposób określić akcję do wykonania, np poruszenie się o 2 metry w lewo lub 2 metry w prawo, wciśnięcie przycisku itp. Bardzo istotne jest też, aby charakterystyka rozwiązywanego problemu pozwalała na natychmiastowe określenie czy wykonana akcja była korzystna czy nie. Problem pojawia się kiedy zadanie osadzone jest w przestrzeni ciągłej, tak jak nasz problem boidów. O ile nie jest trudne zdyskretyzowanie wartości odpowiadających za stan (chociaż wprowadza to kolejne hiperparametry), bardzo problematyczne staje się wyznaczenie akcji, ponieważ nie jest możliwe otrzymanie konkretnej wartości. Zamiast tego konieczne jest wprowadzanie zmian w iterpretacji wybranej akcji, tak jak zrobiliśmy to w sekcji \ref{sec:politics_modification}. Co więcej w przestrzeni ciągłej trudne jest określenie natychmiastowego skutku akcji i wymaga to modyfikowania głównego równania (\ref{eqn:bellman_equation}) używanego do aktualizacji tablicy stanów.
+
+Technika jednak dała podłoże pod dalszy rozwój uczenia ze wzmocnieniem. W tradycyjnym sposobie używamy tabeli Q, która jest funkcją stanu i akcji i przewiduje nagrody. Zamiast tabeli możliwe jest użycie głębokich sieci neuronowych, które przy odpowiedniej architekturze mogą dokladniej nauczyć się przewidywać wartości nagród. Ponieważ qlearning słabo radzi sobie z przestrzenią ciągłą, dobrym rozwiązaniem może być też technika Deep Deterministic Policy Gradient, która polega na zapamiętywaniu kolejnych stanów, a ocena następuje po zakończeniu epoki. Wtedy polityka która przyniosła większe zyski jest maksymalizowana, a polityka słaba minimalizowana. Powoduje to zbieganie się do optymalnego sposobu działania i rozwiązuje problem opóźnionej gratyfikacji.
 \end{document}
